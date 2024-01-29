@@ -1,0 +1,47 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>com.murphy</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+    <name>AndGuard</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor email="zhoujin1316@163.com">DongYu</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+    <description>Android Proguard: Obfuscate android resources</description>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.java</depends>
+    <depends>org.jetbrains.kotlin</depends>
+    <depends>org.jetbrains.android</depends>
+
+    <!-- Extension points defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="AndGuard Notification" displayType="STICKY_BALLOON"/>
+    </extensions>
+    <actions>
+        <action id="and-guard" text="AndGuard" icon="/icons/infinity.svg"
+                class="com.murphy.action.AndGuardAction"
+                description="Obfuscate android resources">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="first"/>
+        </action>
+        <action id="and-binding" text="ViewBinding" icon="/icons/binding.svg"
+                class="com.murphy.action.AndBindingAction"
+                description="Obfuscate viewBinding resources">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="and-guard"/>
+        </action>
+        <action id="and-map" text="DataMap" icon="/icons/mapping.svg"
+                class="com.murphy.action.AndMapAction"
+                description="Mapping data class or java bean">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="and-binding"/>
+        </action>
+    </actions>
+</idea-plugin>
