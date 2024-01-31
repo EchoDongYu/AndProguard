@@ -38,10 +38,5 @@
                 description="Obfuscate viewBinding resources">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="and-guard"/>
         </action>
-        <action id="and-map" text="DataMap" icon="/icons/mapping.svg"
-                class="com.murphy.action.AndMapAction"
-                description="Mapping data class or java bean">
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="and-binding"/>
-        </action>
     </actions>
 </idea-plugin>
