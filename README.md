@@ -1,6 +1,8 @@
+## 0. Desc
 ### 1. How to use
-
-### 2. Tips
+    Tips clean build, viewbinding cache...
+### 2. Custom naming
+    Tips invalid name
 
 1. action 添加进 editor 右键菜单
 2. mapping-log
