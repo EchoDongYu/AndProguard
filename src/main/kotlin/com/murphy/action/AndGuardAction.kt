@@ -43,6 +43,7 @@ class AndGuardAction : AnAction() {
                 val idList: MutableList<String> = LinkedList()
                 ProgressManager.getInstance().run(object : Task.Modal(action.project, PLUGIN_NAME, false) {
                     override fun run(indicator: ProgressIndicator) {
+                        indicator.isIndeterminate = false
                         val iterator = fileList.iterator()
                         while (iterator.hasNext()) {
                             ApplicationManager.getApplication().invokeAndWait {
