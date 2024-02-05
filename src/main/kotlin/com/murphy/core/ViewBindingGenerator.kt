@@ -9,9 +9,7 @@ import com.android.tools.idea.util.androidFacet
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.source.tree.ChildRole
-import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl
+import com.intellij.psi.PsiJavaCodeReferenceElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.xml.XmlAttribute
@@ -19,6 +17,7 @@ import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
 import com.murphy.util.randomResFileName
 import com.murphy.util.randomResIdName
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import java.util.*
 
 fun processViewBinding(psi: XmlFile, idList: MutableList<String> = LinkedList()) {
@@ -45,7 +44,7 @@ private fun XmlAttributeValue.processResId(newName: String) {
     val fieldName = DataBindingUtil.convertAndroidIdToJavaFieldName(resPsi.resourceReference.name)
     val relevantFields = lightClasses.mapNotNull { clazz -> clazz.allFields.find { it.name == fieldName } }
     val scope = GlobalSearchScope.projectScope(project)
-    val bindingRef = relevantFields.map { ReferencesSearch.search(it, scope).findAll() }
+    val bindingRef = relevantFields.map { ReferencesSearch.search(it, scope, true).findAll() }
         .flatten()
         .map { it.element }
     CommandProcessor.getInstance().runUndoTransparentAction {
@@ -54,7 +53,12 @@ private fun XmlAttributeValue.processResId(newName: String) {
             if (bindingRef.isNotEmpty()) {
                 val newRefName = DataBindingUtil.convertAndroidIdToJavaFieldName(newName)
                 println(String.format("[IdViewBinding] %s >>> %s", fieldName, newRefName))
-                bindingRef.forEach { it.replaceSelf(newRefName) }
+                bindingRef.forEach {
+                    when (it) {
+                        is KtNameReferenceExpression -> it.replaceSelfOnKotlin(newRefName)
+                        is PsiJavaCodeReferenceElement -> it.handleElementRename(newRefName)
+                    }
+                }
             }
         }
     }
@@ -71,7 +75,7 @@ private fun XmlFile.processResFile() {
     val lightBindingClasses = bindingModuleCache.getLightBindingClasses(layoutGroup)
     val newName = randomResFileName
     val scope = GlobalSearchScope.projectScope(project)
-    val bindingRef = lightBindingClasses.map { ReferencesSearch.search(it, scope).findAll() }
+    val bindingRef = lightBindingClasses.map { ReferencesSearch.search(it, scope, true).findAll() }
         .flatten()
         .map { it.element }
     CommandProcessor.getInstance().runUndoTransparentAction {
@@ -80,20 +84,19 @@ private fun XmlFile.processResFile() {
             if (bindingRef.isNotEmpty()) {
                 val newRefName = DataBindingUtil.convertFileNameToJavaClassName(newName) + "Binding"
                 println(String.format("[LayoutViewBinding] %s >>> %s", className, newRefName))
-                bindingRef.forEach { it.replaceSelf(newRefName) }
+                bindingRef.forEach {
+                    when (it) {
+                        is KtNameReferenceExpression -> it.replaceSelfOnKotlin(newRefName)
+                        is PsiJavaCodeReferenceElement -> it.handleElementRename(newRefName)
+                    }
+                }
             }
         }
     }
 }
 
-private fun PsiElement.replaceSelf(newName: String) {
-    val factory = JavaPsiFacade.getElementFactory(manager.project)
-    val newNameIdentifier = factory.createIdentifier(newName)
-    replace(newNameIdentifier)
-}
-
-private fun PsiReferenceExpressionImpl.replaceSelfOnJava(newName: String) {
-    val oldIdentifier = findChildByRoleAsPsiElement(ChildRole.REFERENCE_NAME) ?: return
+private fun KtNameReferenceExpression.replaceSelfOnKotlin(newName: String) {
+    val oldIdentifier = getReferencedNameElement()
     val identifier = JavaPsiFacade.getElementFactory(getProject()).createIdentifier(newName)
     oldIdentifier.replace(identifier)
 }
