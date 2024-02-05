@@ -44,7 +44,7 @@ private fun XmlAttributeValue.processResId(newName: String) {
     val fieldName = DataBindingUtil.convertAndroidIdToJavaFieldName(resPsi.resourceReference.name)
     val relevantFields = lightClasses.mapNotNull { clazz -> clazz.allFields.find { it.name == fieldName } }
     val scope = GlobalSearchScope.projectScope(project)
-    val bindingRef = relevantFields.map { ReferencesSearch.search(it, scope, true).findAll() }
+    val bindingRef = relevantFields.map { ReferencesSearch.search(it, scope).findAll() }
         .flatten()
         .map { it.element }
     CommandProcessor.getInstance().runUndoTransparentAction {
@@ -75,7 +75,7 @@ private fun XmlFile.processResFile() {
     val lightBindingClasses = bindingModuleCache.getLightBindingClasses(layoutGroup)
     val newName = randomResFileName
     val scope = GlobalSearchScope.projectScope(project)
-    val bindingRef = lightBindingClasses.map { ReferencesSearch.search(it, scope, true).findAll() }
+    val bindingRef = lightBindingClasses.map { ReferencesSearch.search(it, scope).findAll() }
         .flatten()
         .map { it.element }
     CommandProcessor.getInstance().runUndoTransparentAction {
