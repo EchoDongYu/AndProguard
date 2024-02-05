@@ -8,8 +8,6 @@ import com.android.tools.idea.res.psi.ResourceReferencePsiElement
 import com.android.tools.idea.util.androidFacet
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
-import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.PsiJavaCodeReferenceElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.xml.XmlAttribute
@@ -17,7 +15,6 @@ import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
 import com.murphy.util.randomResFileName
 import com.murphy.util.randomResIdName
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import java.util.*
 
 fun processViewBinding(psi: XmlFile, idList: MutableList<String> = LinkedList()) {
@@ -44,21 +41,14 @@ private fun XmlAttributeValue.processResId(newName: String) {
     val fieldName = DataBindingUtil.convertAndroidIdToJavaFieldName(resPsi.resourceReference.name)
     val relevantFields = lightClasses.mapNotNull { clazz -> clazz.allFields.find { it.name == fieldName } }
     val scope = GlobalSearchScope.projectScope(project)
-    val bindingRef = relevantFields.map { ReferencesSearch.search(it, scope, true).findAll() }
-        .flatten()
-        .map { it.element }
+    val bindingRef = relevantFields.map { ReferencesSearch.search(it, scope).findAll() }.flatten()
     CommandProcessor.getInstance().runUndoTransparentAction {
         rename(newName, "XmlId")
         ApplicationManager.getApplication().runWriteAction {
             if (bindingRef.isNotEmpty()) {
                 val newRefName = DataBindingUtil.convertAndroidIdToJavaFieldName(newName)
                 println(String.format("[IdViewBinding] %s >>> %s", fieldName, newRefName))
-                bindingRef.forEach {
-                    when (it) {
-                        is KtNameReferenceExpression -> it.replaceSelfOnKotlin(newRefName)
-                        is PsiJavaCodeReferenceElement -> it.handleElementRename(newRefName)
-                    }
-                }
+                bindingRef.forEach { it.handleElementRename(newRefName) }
             }
         }
     }
@@ -73,30 +63,17 @@ private fun XmlFile.processResFile() {
     val className = DataBindingUtil.convertFileNameToJavaClassName(name) + "Binding"
     val layoutGroup = groups.firstOrNull { it.mainLayout.className == className } ?: return
     val lightBindingClasses = bindingModuleCache.getLightBindingClasses(layoutGroup)
-    val newName = randomResFileName
     val scope = GlobalSearchScope.projectScope(project)
-    val bindingRef = lightBindingClasses.map { ReferencesSearch.search(it, scope, true).findAll() }
-        .flatten()
-        .map { it.element }
+    val bindingRef = lightBindingClasses.map { ReferencesSearch.search(it, scope).findAll() }.flatten()
     CommandProcessor.getInstance().runUndoTransparentAction {
+        val newName = randomResFileName
         rename(newName, "XmlFile")
         ApplicationManager.getApplication().runWriteAction {
             if (bindingRef.isNotEmpty()) {
                 val newRefName = DataBindingUtil.convertFileNameToJavaClassName(newName) + "Binding"
                 println(String.format("[LayoutViewBinding] %s >>> %s", className, newRefName))
-                bindingRef.forEach {
-                    when (it) {
-                        is KtNameReferenceExpression -> it.replaceSelfOnKotlin(newRefName)
-                        is PsiJavaCodeReferenceElement -> it.handleElementRename(newRefName)
-                    }
-                }
+                bindingRef.forEach { it.handleElementRename(newRefName) }
             }
         }
     }
-}
-
-private fun KtNameReferenceExpression.replaceSelfOnKotlin(newName: String) {
-    val oldIdentifier = getReferencedNameElement()
-    val identifier = JavaPsiFacade.getElementFactory(getProject()).createIdentifier(newName)
-    oldIdentifier.replace(identifier)
 }
