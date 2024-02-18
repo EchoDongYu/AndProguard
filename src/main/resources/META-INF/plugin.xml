@@ -38,10 +38,5 @@
                 description="Obfuscate viewBinding resources">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="and-guard"/>
         </action>
-        <action id="and-binding2" text="ViewBinding2" icon="/icons/binding.svg"
-                class="com.murphy.action.AndBinding2Action"
-                description="Obfuscate viewBinding resources">
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="and-binding"/>
-        </action>
     </actions>
 </idea-plugin>
