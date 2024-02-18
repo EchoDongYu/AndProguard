@@ -9,7 +9,7 @@ import com.murphy.util.randomResFileName
 import com.murphy.util.randomResIdName
 import java.util.*
 
-fun processXml(psi: XmlFile, idList: MutableList<String> = LinkedList()) {
+fun processXml(psi: XmlFile, resIdList: MutableList<String> = LinkedList()) {
     println("============================== ${psi.name} ==============================")
     val tagSeq = psi.childrenDfsSequence().filterIsInstance<XmlTag>()
     tagSeq.forEach { tag ->
@@ -20,9 +20,9 @@ fun processXml(psi: XmlFile, idList: MutableList<String> = LinkedList()) {
 
             else -> {
                 val attr = tag.getAttribute(ANDROID_NS_NAME_PREFIX + ATTR_ID) ?: return@forEach
-                if (idList.contains(attr.value)) return@forEach
+                if (resIdList.contains(attr.value)) return@forEach
                 val newName = randomResIdName
-                idList.add(NEW_ID_PREFIX + newName)
+                resIdList.add(NEW_ID_PREFIX + newName)
                 attr.valueElement?.rename(newName, "ResId")
             }
         }

@@ -40,7 +40,7 @@ class AndGuardAction : AnAction() {
                 val size = fileList.size
                 val total: Double = size.toDouble()
                 var count = 0
-                val idList: MutableList<String> = LinkedList()
+                val resIdList: MutableList<String> = LinkedList()
                 ProgressManager.getInstance().run(object : Task.Modal(action.project, PLUGIN_NAME, false) {
                     override fun run(indicator: ProgressIndicator) {
                         indicator.isIndeterminate = false
@@ -50,7 +50,7 @@ class AndGuardAction : AnAction() {
                                 when (val next = iterator.next()) {
                                     is PsiJavaFile -> processJava(next)
                                     is KtFile -> processKotlin(next)
-                                    is XmlFile -> processXml(next, idList)
+                                    is XmlFile -> processXml(next, resIdList)
                                     is PsiBinaryFile -> next.rename(randomResFileName, "File")
                                 }
                             }
@@ -69,7 +69,7 @@ class AndGuardAction : AnAction() {
                     }
 
                     override fun onFinished() {
-                        idList.clear()
+                        resIdList.clear()
                     }
                 })
             }
