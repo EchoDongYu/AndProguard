@@ -81,7 +81,7 @@ fun computeTime(startTime: Long): String {
         if (days > 0) strBuilder.append(days).append(" d ")
         if (hours > 0) strBuilder.append(hours).append(" h ")
         if (minutes > 0) strBuilder.append(minutes).append(" m ")
-        if (seconds > 0) strBuilder.append(seconds).append(" s ")
+        if (seconds >= 0) strBuilder.append(seconds).append(" s ")
     }
     return strBuilder.toString()
 }

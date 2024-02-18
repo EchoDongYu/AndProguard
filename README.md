@@ -11,4 +11,3 @@
     1. custon name rule
     2. exclude package
     3. skip data
-### 4. ViewBinding 遗漏

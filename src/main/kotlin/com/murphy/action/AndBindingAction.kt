@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -37,14 +38,16 @@ class AndBindingAction : AnAction() {
         val dateStart = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
         println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> $dateStart [Refactor Start] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
         val startTime = System.currentTimeMillis()
-        val sequenceId = psi.seqResId
-        val sequenceLayout = psi.seqLayout
-        val size = sequenceId.size + sequenceLayout.size
-        val total: Double = size.toDouble()
         var count = 0
         ProgressManager.getInstance().run(object : Task.Modal(project, PLUGIN_NAME, false) {
             override fun run(indicator: ProgressIndicator) {
                 indicator.isIndeterminate = false
+                indicator.fraction = 0.0
+                indicator.text = "Waiting search binding element..."
+                val sequenceId = runReadAction { psi.seqResId }
+                val sequenceLayout = runReadAction { psi.seqLayout }
+                val size = sequenceId.size + sequenceLayout.size
+                val total: Double = size.toDouble()
                 sequenceId.forEach {
                     renameResId(project, it.first, it.second)
                     indicator.fraction = ++count / total
