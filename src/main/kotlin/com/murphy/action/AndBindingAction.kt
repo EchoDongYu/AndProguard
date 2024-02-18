@@ -79,13 +79,6 @@ class AndBindingAction : AnAction() {
             .mapNotNull { it.layoutMap }
             .toList()
 
-    private val PsiElement.seqResId
-        get() = childrenDfsSequence()
-            .filterIsInstance<XmlAttributeValue>()
-            .mapNotNull { it.resIdMap }
-            .distinctBy { it.first.resourceReference.name }
-            .toList()
-
     private val XmlFile.layoutMap
         get(): Pair<XmlFile, List<PsiReference>>? {
             val resPsi = ResourceReferencePsiElement.create(this) ?: return null
@@ -102,27 +95,7 @@ class AndBindingAction : AnAction() {
             return Pair(this, psiReferences)
         }
 
-    private val XmlAttributeValue.resIdMap
-        get(): Pair<ResourceReferencePsiElement, List<PsiReference>>? {
-            val resPsi = ResourceReferencePsiElement.create(this) ?: return null
-            if (resPsi.resourceReference.resourceType != ResourceType.ID) return null
-            val facet = AndroidFacet.getInstance(this) ?: return null
-            val scope = GlobalSearchScope.projectScope(project)
-            val bindingModuleCache = LayoutBindingModuleCache.getInstance(facet)
-            val groups = bindingModuleCache.bindingLayoutGroups
-            val lightClasses = groups.flatMap { group -> bindingModuleCache.getLightBindingClasses(group) }
-            val fieldName = DataBindingUtil.convertAndroidIdToJavaFieldName(resPsi.resourceReference.name)
-            val psiReferences = lightClasses.mapNotNull { it.allFields.find { field -> field.name == fieldName } }
-                .map { field -> ReferencesSearch.search(field, scope).findAll() }
-                .flatten()
-            return Pair(resPsi, psiReferences)
-        }
-
-    private fun renameLayout(
-        project: Project,
-        psiElement: XmlFile,
-        list: List<PsiReference>
-    ) {
+    private fun renameLayout(project: Project, psiElement: XmlFile, list: List<PsiReference>) {
         val newName = randomResFileName
         ApplicationManager.getApplication().invokeAndWait {
             psiElement.rename(newName, "XmlFile")
@@ -130,17 +103,42 @@ class AndBindingAction : AnAction() {
         if (list.isNotEmpty()) {
             val newRefName = DataBindingUtil.convertFileNameToJavaClassName(newName) + "Binding"
             println(String.format("[LayoutViewBinding] >>> %s", newRefName))
-            WriteCommandAction.runWriteCommandAction(project) {
+            WriteCommandAction.writeCommandAction(project).withName(PLUGIN_NAME).run<RuntimeException> {
                 list.forEach { ref -> ref.handleElementRename(newRefName) }
             }
         }
     }
 
-    private fun renameResId(
-        project: Project,
-        psiElement: ResourceReferencePsiElement,
-        list: List<PsiReference>
-    ) {
+    private val PsiElement.seqResId
+        get() = childrenDfsSequence()
+            .filterIsInstance<XmlAttributeValue>()
+            .mapNotNull { it.resMap }
+            .distinctBy { it.second.resourceReference.name }
+            .mapNotNull { it.idMap }
+            .toList()
+
+    private val XmlAttributeValue.resMap
+        get(): Pair<XmlAttributeValue, ResourceReferencePsiElement>? {
+            val resPsi = ResourceReferencePsiElement.create(this) ?: return null
+            if (resPsi.resourceReference.resourceType != ResourceType.ID) return null
+            return Pair(this, resPsi)
+        }
+
+    private val Pair<XmlAttributeValue, ResourceReferencePsiElement>.idMap
+        get(): Pair<XmlAttributeValue, List<PsiReference>>? {
+            val facet = AndroidFacet.getInstance(first) ?: return null
+            val scope = GlobalSearchScope.projectScope(first.project)
+            val bindingModuleCache = LayoutBindingModuleCache.getInstance(facet)
+            val groups = bindingModuleCache.bindingLayoutGroups
+            val lightClasses = groups.flatMap { group -> bindingModuleCache.getLightBindingClasses(group) }
+            val fieldName = DataBindingUtil.convertAndroidIdToJavaFieldName(second.resourceReference.name)
+            val psiReferences = lightClasses.mapNotNull { it.allFields.find { field -> field.name == fieldName } }
+                .map { ReferencesSearch.search(it, scope).findAll() }
+                .flatten()
+            return Pair(first, psiReferences)
+        }
+
+    private fun renameResId(project: Project, psiElement: XmlAttributeValue, list: List<PsiReference>) {
         val newName = randomResIdName
         ApplicationManager.getApplication().invokeAndWait {
             psiElement.rename(newName, "XmlId")
@@ -148,7 +146,7 @@ class AndBindingAction : AnAction() {
         if (list.isNotEmpty()) {
             val newRefName = DataBindingUtil.convertAndroidIdToJavaFieldName(newName)
             println(String.format("[IdViewBinding] >>> %s", newRefName))
-            WriteCommandAction.runWriteCommandAction(project) {
+            WriteCommandAction.writeCommandAction(project).withName(PLUGIN_NAME).run<RuntimeException> {
                 list.forEach { ref -> ref.handleElementRename(newRefName) }
             }
         }
