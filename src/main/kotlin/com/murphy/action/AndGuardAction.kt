@@ -66,6 +66,7 @@ class AndGuardAction : AnAction() {
 
                     override fun onThrowable(error: Throwable) {
                         notifyError(action.project, "${error.message}")
+                        error.printStackTrace()
                     }
 
                     override fun onFinished() {

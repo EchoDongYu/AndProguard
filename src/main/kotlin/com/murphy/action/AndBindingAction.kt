@@ -66,6 +66,7 @@ class AndBindingAction : AnAction() {
 
             override fun onThrowable(error: Throwable) {
                 notifyError(project, "${error.message}")
+                error.printStackTrace()
             }
         })
         val dateEnd = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
