@@ -6,6 +6,14 @@ const val UPPERCASE_LETTER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 const val LOWERCASE_LETTER = "abcdefghijklmnopqrstuvwxyz"
 
+const val CHAR_UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+const val CHAR_LOWER = "abcdefghijklmnopqrstuvwxyz"
+
+const val CHAR_DIGIT = "0123456789"
+
+const val CHAR_UNDERLINE = "_"
+
 const val KOTLIN_SUFFIX = ".kt"
 
 const val XML_SUFFIX = ".xml"
