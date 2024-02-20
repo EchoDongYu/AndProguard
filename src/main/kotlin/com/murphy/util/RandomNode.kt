@@ -1,9 +1,5 @@
-package com.murphy.random
+package com.murphy.util
 
-import com.murphy.util.CHAR_DIGIT
-import com.murphy.util.CHAR_LOWER
-import com.murphy.util.CHAR_UNDERLINE
-import com.murphy.util.CHAR_UPPER
 import java.util.*
 import kotlin.random.Random
 
