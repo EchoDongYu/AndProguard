@@ -22,10 +22,13 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
+import com.murphy.config.AndGuardCoinfigState
 import com.murphy.core.childrenDfsSequence
 import com.murphy.core.computeTime
 import com.murphy.core.rename
-import com.murphy.util.*
+import com.murphy.util.PLUGIN_NAME
+import com.murphy.util.notifyError
+import com.murphy.util.notifyInfo
 import org.jetbrains.android.facet.AndroidFacet
 import java.util.*
 
@@ -37,6 +40,7 @@ class AndBindingAction : AnAction() {
         val project = action.project ?: return
         val dateStart = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
         println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> $dateStart [Refactor Start] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+        AndGuardCoinfigState.getInstance().initRandomNode()
         val startTime = System.currentTimeMillis()
         var count = 0
         ProgressManager.getInstance().run(object : Task.Modal(project, PLUGIN_NAME, false) {
@@ -96,7 +100,7 @@ class AndBindingAction : AnAction() {
         }
 
     private fun renameLayout(project: Project, psiElement: XmlFile, list: List<PsiReference>) {
-        val newName = randomResFileName
+        val newName = AndGuardCoinfigState.getInstance().randomLayoutResName
         ApplicationManager.getApplication().invokeAndWait {
             psiElement.rename(newName, "XmlFile")
         }
@@ -139,7 +143,7 @@ class AndBindingAction : AnAction() {
         }
 
     private fun renameResId(project: Project, psiElement: XmlAttributeValue, list: List<PsiReference>) {
-        val newName = randomResIdName
+        val newName = AndGuardCoinfigState.getInstance().randomIdResName
         ApplicationManager.getApplication().invokeAndWait {
             psiElement.rename(newName, "XmlId")
         }

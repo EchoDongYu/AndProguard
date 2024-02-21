@@ -48,5 +48,5 @@ class AndGuardConfigurable : Configurable {
         form.skipData = state.skipData
     }
 
-    override fun getDisplayName(): String = "AndGuardConfig"
+    override fun getDisplayName(): String = "AndGuard Config"
 }

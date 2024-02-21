@@ -5,29 +5,29 @@ import com.android.resources.ResourceType
 import com.android.tools.idea.res.psi.ResourceReferencePsiElement
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
-import com.murphy.util.randomResFileName
-import com.murphy.util.randomResIdName
+import com.murphy.config.AndGuardCoinfigState
 import java.util.*
 
 fun processXml(psi: XmlFile, resIdList: MutableList<String> = LinkedList()) {
     println("============================== ${psi.name} ==============================")
+    val config = AndGuardCoinfigState.getInstance()
     val tagSeq = psi.childrenDfsSequence().filterIsInstance<XmlTag>()
     tagSeq.forEach { tag ->
         when (tag.name) {
             TAG_STRING, TAG_STRING_ARRAY, TAG_STYLE, TAG_COLOR, TAG_DIMEN, TAG_ITEM -> {
-                tag.getAttribute(ATTR_NAME)?.valueElement?.rename(randomResIdName, "Resource")
+                tag.getAttribute(ATTR_NAME)?.valueElement?.rename(config.randomIdResName, "Resource")
             }
 
             else -> {
                 val attr = tag.getAttribute(ANDROID_NS_NAME_PREFIX + ATTR_ID) ?: return@forEach
                 if (resIdList.contains(attr.value)) return@forEach
-                val newName = randomResIdName
+                val newName = config.randomIdResName
                 resIdList.add(NEW_ID_PREFIX + newName)
                 attr.valueElement?.rename(newName, "ResId")
             }
         }
     }
-    if (psi.checkRename()) psi.rename(randomResFileName, "ResFile")
+    if (psi.checkRename()) psi.rename(config.randomLayoutResName, "ResFile")
 }
 
 private fun XmlFile.checkRename(): Boolean {

@@ -13,8 +13,12 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.xml.XmlFile
+import com.murphy.config.AndGuardCoinfigState
 import com.murphy.core.*
-import com.murphy.util.*
+import com.murphy.util.PLUGIN_NAME
+import com.murphy.util.notifyError
+import com.murphy.util.notifyInfo
+import com.murphy.util.notifyWarn
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
@@ -25,11 +29,13 @@ class AndGuardAction : AnAction() {
         val psi = action.getData(PlatformDataKeys.PSI_ELEMENT) ?: return
         val dateStart = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
         println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> $dateStart [Refactor Start] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+        val config = AndGuardCoinfigState.getInstance()
+        config.initRandomNode()
         when (psi) {
             is KtClassOrObject -> processKotlin(psi)
             is PsiClass -> processJava(psi)
             is XmlFile -> processXml(psi)
-            is PsiBinaryFile -> psi.rename(randomResFileName, "File")
+            is PsiBinaryFile -> psi.rename(config.randomLayoutResName, "File")
             is PsiDirectory -> {
                 val fileList = psi.fileList()
                 if (fileList.isEmpty()) {
@@ -51,7 +57,7 @@ class AndGuardAction : AnAction() {
                                     is PsiJavaFile -> processJava(next)
                                     is KtFile -> processKotlin(next)
                                     is XmlFile -> processXml(next, resIdList)
-                                    is PsiBinaryFile -> next.rename(randomResFileName, "File")
+                                    is PsiBinaryFile -> next.rename(config.randomLayoutResName, "File")
                                 }
                             }
                             indicator.fraction = ++count / total

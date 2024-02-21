@@ -15,9 +15,16 @@ import com.murphy.util.RandomNode.Companion.parseNode
 class AndGuardCoinfigState : PersistentStateComponent<AndGuardCoinfigState> {
     var classRule: String = "{[1000](1)[0100](3,9)}(2,3)"
     var methodRule: String = "[0100](4,12){[1000](1)[0100](3,9)}(0,2)"
-    var fieldRule: String = "[0100](3,8){[1000](1)[0100](3,9)}(0,1)"
+    var fieldRule: String = "[0100](3,9){[1000](1)[0100](3,8)}(0,1)"
     var idResRule: String = "[0100](4,7){<_>[0100](4,7)}(0,1)"
-    var layoutResRule: String = "[0100](4,7){<_>[0100](4,7)}(0,2)"
+    var layoutResRule: String = "[0100](4,7){<_>[0100](4,7)}(1,2)"
+
+    /**
+     * @Scope：Java/Kotlin
+     * 是否忽略数据内容不处理：
+     * 1. Java Bean： Getter/Setter 函数名，以及类中相对应的成员变量名
+     * 2. Data Class： 主构造方法的参数名
+     */
     var skipData: Boolean = true
     private lateinit var randomNodeList: MutableList<RandomNode>
 

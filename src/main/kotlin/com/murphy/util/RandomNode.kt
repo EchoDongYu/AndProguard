@@ -65,9 +65,9 @@ class RandomNode(
                         content.indexOfLast(pos, '<')
                     }
 
-                    else -> throw IllegalArgumentException("Wrong parse: ${content[pos]}")
+                    else -> throw IllegalArgumentException("Wrong parse: $content pos{$pos} char{${content[pos]}}")
                 }
-                assert(start > 0)
+                assert(start >= 0) { "Wrong assert: $content pos{$pos} char{${content[pos]}}" }
                 stack.push(content.substring(start, pos + 1))
                 pos = start - 1
             }
