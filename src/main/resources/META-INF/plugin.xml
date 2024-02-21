@@ -26,6 +26,12 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup id="AndGuard Notification" displayType="STICKY_BALLOON"/>
+        <applicationService serviceImplementation="com.murphy.config.AndGuardCoinfigState"/>
+        <applicationConfigurable
+                parentId="tools"
+                id="and-guard-config"
+                instance="com.murphy.config.AndGuardConfigurable"
+                displayName="AndGuardConfig"/>
     </extensions>
     <actions>
         <action id="and-guard" text="AndGuard" icon="/icons/infinity.svg"
