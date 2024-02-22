@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.murphy"
-version = "3.4.0"
+version = "3.5.0"
 
 repositories {
     mavenCentral()
