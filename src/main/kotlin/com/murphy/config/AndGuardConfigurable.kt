@@ -1,7 +1,7 @@
 package com.murphy.config
 
 import com.intellij.openapi.options.Configurable
-import com.murphy.AndGuardForm
+import com.murphy.ui.AndGuardForm
 import javax.swing.JComponent
 
 class AndGuardConfigurable : Configurable {

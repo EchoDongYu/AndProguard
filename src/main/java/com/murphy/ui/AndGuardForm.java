@@ -1,4 +1,4 @@
-package com.murphy;
+package com.murphy.ui;
 
 import javax.swing.*;
 
