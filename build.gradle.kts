@@ -1,11 +1,11 @@
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.9.21"
-    id("org.jetbrains.intellij") version "1.16.1"
+    id("org.jetbrains.intellij") version "1.17.2"
 }
 
 group = "com.murphy"
-version = "3.5.0"
+version = "3.5.2"
 
 repositories {
     mavenCentral()
@@ -15,7 +15,7 @@ repositories {
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
     version.set("2023.1.5")
-    type.set("IC") // Target IDE Platform
+    type.set("AI") // Target IDE Platform
 
     plugins.set(listOf("com.intellij.java", "org.jetbrains.kotlin", "org.jetbrains.android"))
 }
@@ -32,7 +32,6 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("221")
-        untilBuild.set("241.*")
     }
 
     signPlugin {

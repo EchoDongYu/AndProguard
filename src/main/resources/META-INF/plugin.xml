@@ -28,6 +28,7 @@
         <notificationGroup id="AndGuard Notification" displayType="STICKY_BALLOON"/>
         <applicationService serviceImplementation="com.murphy.config.AndGuardCoinfigState"/>
         <applicationConfigurable
+                parentId="tools"
                 id="and-guard-config"
                 instance="com.murphy.config.AndGuardConfigurable"
                 displayName="AndGuard Config"/>
