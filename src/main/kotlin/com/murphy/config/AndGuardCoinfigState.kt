@@ -18,6 +18,7 @@ class AndGuardCoinfigState : PersistentStateComponent<AndGuardCoinfigState> {
     var fieldRule: String = "[0100](3,9){[1000](1)[0100](3,8)}(0,1)"
     var idResRule: String = "[0100](4,7){<_>[0100](4,7)}(0,1)"
     var layoutResRule: String = "[0100](4,7){<_>[0100](4,7)}(1,2)"
+    var excludePath: String = ""
 
     /**
      * @Scope：Java/Kotlin
@@ -26,7 +27,8 @@ class AndGuardCoinfigState : PersistentStateComponent<AndGuardCoinfigState> {
      * 2. Data Class： 主构造方法的参数名
      */
     var skipData: Boolean = true
-    private lateinit var randomNodeList: MutableList<RandomNode>
+    private lateinit var randomNodeList: List<RandomNode>
+    lateinit var exlcudeList: List<String>
 
     val randomClassName get() = randomNodeList[0].randomString
     val randomMethodName get() = randomNodeList[1].randomString
@@ -41,13 +43,17 @@ class AndGuardCoinfigState : PersistentStateComponent<AndGuardCoinfigState> {
     }
 
     fun initRandomNode() {
-        randomNodeList = mutableListOf(
+        randomNodeList = listOf(
             classRule.parseNode(),
             methodRule.parseNode(),
             fieldRule.parseNode(),
             idResRule.parseNode(),
             layoutResRule.parseNode()
         )
+    }
+
+    fun initExcludePakage() {
+        exlcudeList = excludePath.split(';').filter { it.isNotBlank() }
     }
 
     companion object {

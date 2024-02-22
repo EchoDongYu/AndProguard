@@ -14,13 +14,15 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import kotlin.time.Duration.Companion.milliseconds
 
-fun PsiDirectory.packageName() {
-    val srouce = virtualFile.path.replace('/', '.')
+fun PsiDirectory.skip(list: List<String>): Boolean {
+    val path = virtualFile.path.replace('/', '.')
+    return list.firstOrNull { path.contains(it) } != null
 }
 
-fun PsiDirectory.fileList(): MutableList<PsiFile> {
+fun PsiDirectory.fileList(exlcude: List<String>): MutableList<PsiFile> {
     val list: MutableList<PsiFile> = ArrayList()
-    subdirectories.forEach { list.addAll(it.fileList()) }
+    if (skip(exlcude)) return list
+    subdirectories.forEach { list.addAll(it.fileList(exlcude)) }
     list.addAll(files)
     return list
 }

@@ -37,7 +37,8 @@ class AndGuardAction : AnAction() {
             is XmlFile -> processXml(psi)
             is PsiBinaryFile -> psi.rename(config.randomLayoutResName, "File")
             is PsiDirectory -> {
-                val fileList = psi.fileList()
+                config.initExcludePakage()
+                val fileList = psi.fileList(config.exlcudeList)
                 if (fileList.isEmpty()) {
                     notifyWarn(action.project, "Nothing to do")
                     return
