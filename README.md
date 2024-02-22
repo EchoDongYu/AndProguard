@@ -34,9 +34,3 @@
 ## TODO
 
 ### 1. mapping-log
-
-### 2. Setting
-
-    1. custon name rule(class, field/property/parameter/variable, method/function, layoutRes, idRes)
-    2. exclude package
-    3. skip data

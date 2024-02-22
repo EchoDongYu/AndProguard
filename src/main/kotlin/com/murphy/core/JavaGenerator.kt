@@ -22,10 +22,9 @@ fun processJava(psi: PsiNamedElement) {
                 }
 
                 is PsiMethodImpl -> {
-                    val getterOrSetter = it.isGetterOrSetter()
-                    if (config.skipData && getterOrSetter) it.getFieldOfGetterOrSetter()
-                        ?.let { e -> skipElements.add(e) }
-                    if (!getterOrSetter && it.findSuperMethods().isEmpty() && !it.isConstructor && !it.isMainMethod())
+                    val skip = config.skipData && it.isGetterOrSetter()
+                    if (skip) it.getFieldOfGetterOrSetter()?.let { e -> skipElements.add(e) }
+                    if (!skip && it.findSuperMethods().isEmpty() && !it.isConstructor && !it.isMainMethod())
                         it.rename(config.randomMethodName, "Method")
                 }
 
