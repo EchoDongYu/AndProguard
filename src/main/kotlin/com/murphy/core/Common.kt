@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.idea.search.isImportUsage
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import kotlin.time.ExperimentalTime
-import kotlin.time.milliseconds
+import java.util.concurrent.TimeUnit
 
 fun PsiDirectory.skip(list: List<String>): Boolean {
     val path = virtualFile.path.replace('/', '.')
@@ -82,15 +81,19 @@ private fun PsiReference.getNamedElement(other: String?): PsiNamedElement? {
     }
 }
 
-@OptIn(ExperimentalTime::class)
 fun computeTime(startTime: Long): String {
     val time = System.currentTimeMillis() - startTime
+    val days = TimeUnit.MILLISECONDS.toDays(time)
+    val toHours = TimeUnit.MILLISECONDS.toHours(time)
+    val toMinutes = TimeUnit.MILLISECONDS.toMinutes(time)
+    val toSeconds = TimeUnit.MILLISECONDS.toSeconds(time)
+    val hours = toHours - TimeUnit.DAYS.toHours(days)
+    val minutes = toMinutes - TimeUnit.HOURS.toMinutes(toHours)
+    val seconds = toSeconds - TimeUnit.MINUTES.toSeconds(toMinutes)
     val strBuilder = StringBuilder()
-    time.milliseconds.toComponents { days, hours, minutes, seconds, _ ->
-        if (days > 0) strBuilder.append(days).append(" d ")
-        if (hours > 0) strBuilder.append(hours).append(" h ")
-        if (minutes > 0) strBuilder.append(minutes).append(" m ")
-        if (seconds >= 0) strBuilder.append(seconds).append(" s ")
-    }
+    if (days > 0) strBuilder.append(days).append(" d ")
+    if (hours > 0) strBuilder.append(hours).append(" h ")
+    if (minutes > 0) strBuilder.append(minutes).append(" m ")
+    if (seconds >= 0) strBuilder.append(seconds).append(" s ")
     return strBuilder.toString()
 }

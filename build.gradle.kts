@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.murphy"
-version = "3.5.2"
+version = "3.5.3"
 
 repositories {
     mavenCentral()
@@ -33,6 +33,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("211")
+        untilBuild.set("241.*")
     }
 
     signPlugin {
