@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.idea.search.isImportUsage
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.ExperimentalTime
+import kotlin.time.milliseconds
 
 fun PsiDirectory.skip(list: List<String>): Boolean {
     val path = virtualFile.path.replace('/', '.')
@@ -40,7 +41,7 @@ fun PsiNamedElement.rename(newName: String, desc: String) {
     println(String.format("[$desc] %s >>> %s", name, newName))
     val project = project
     RefactoringFactory.getInstance(project)
-        .createRename(this, newName, GlobalSearchScope.projectScope(project), false, false)
+        .createRename(this, newName, false, false)
         .run()
 }
 
@@ -48,7 +49,7 @@ fun XmlAttributeValue.rename(newName: String, desc: String) {
     println(String.format("[$desc] %s >>> %s", value, newName))
     val project = project
     RefactoringFactory.getInstance(project)
-        .createRename(this, newName, GlobalSearchScope.projectScope(project), false, false)
+        .createRename(this, newName, false, false)
         .run()
 }
 
@@ -81,6 +82,7 @@ private fun PsiReference.getNamedElement(other: String?): PsiNamedElement? {
     }
 }
 
+@OptIn(ExperimentalTime::class)
 fun computeTime(startTime: Long): String {
     val time = System.currentTimeMillis() - startTime
     val strBuilder = StringBuilder()

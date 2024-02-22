@@ -13,9 +13,10 @@ repositories {
 
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
+// http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html
 intellij {
-    version.set("2023.1.5")
-    type.set("AI") // Target IDE Platform
+    version.set("2021.1")
+    type.set("IC") // Target IDE Platform
 
     plugins.set(listOf("com.intellij.java", "org.jetbrains.kotlin", "org.jetbrains.android"))
 }
@@ -31,7 +32,7 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("221")
+        sinceBuild.set("211")
     }
 
     signPlugin {

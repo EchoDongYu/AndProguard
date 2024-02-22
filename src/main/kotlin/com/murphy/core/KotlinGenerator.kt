@@ -4,6 +4,7 @@ import com.intellij.psi.PsiNamedElement
 import com.murphy.config.AndGuardCoinfigState
 import com.murphy.util.KOTLIN_SUFFIX
 import org.jetbrains.kotlin.idea.isMainFunction
+import org.jetbrains.kotlin.idea.util.isAnonymousFunction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
@@ -27,7 +28,7 @@ fun processKotlin(psi: PsiNamedElement) {
                 }
 
                 is KtNamedFunction -> {
-                    if (!it.hasModifier(KtTokens.OVERRIDE_KEYWORD) && !it.isMainFunction() && !it.isAnonymous)
+                    if (!it.hasModifier(KtTokens.OVERRIDE_KEYWORD) && !it.isMainFunction() && !it.isAnonymousFunction)
                         it.rename(config.randomMethodName, "Function")
                 }
 
