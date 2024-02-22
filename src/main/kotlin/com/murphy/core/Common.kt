@@ -14,10 +14,8 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import kotlin.time.Duration.Companion.milliseconds
 
-fun PsiDirectory.packageName(): String {
-    val parent = parent
-    return if (parent == null || parent.name == "main") name
-    else "${parent.packageName()}.$name"
+fun PsiDirectory.packageName() {
+    val srouce = virtualFile.path.replace('/', '.')
 }
 
 fun PsiDirectory.fileList(): MutableList<PsiFile> {

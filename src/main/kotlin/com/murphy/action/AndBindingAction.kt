@@ -40,7 +40,8 @@ class AndBindingAction : AnAction() {
         val project = action.project ?: return
         val dateStart = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
         println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> $dateStart [Refactor Start] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
-        AndGuardCoinfigState.getInstance().initRandomNode()
+        val config = AndGuardCoinfigState.getInstance()
+        config.initRandomNode()
         val startTime = System.currentTimeMillis()
         var count = 0
         ProgressManager.getInstance().run(object : Task.Modal(project, PLUGIN_NAME, false) {
@@ -53,12 +54,12 @@ class AndBindingAction : AnAction() {
                 val size = sequenceId.size + sequenceLayout.size
                 val total: Double = size.toDouble()
                 sequenceId.forEach {
-                    renameResId(project, it.first, it.second)
+                    renameResId(project, it.first, it.second, config.randomIdResName)
                     indicator.fraction = ++count / total
                     indicator.text = "$count element of $size element"
                 }
                 sequenceLayout.forEach {
-                    renameLayout(project, it.first, it.second)
+                    renameLayout(project, it.first, it.second, config.randomLayoutResName)
                     indicator.fraction = ++count / total
                     indicator.text = "$count element of $size element"
                 }
@@ -99,10 +100,9 @@ class AndBindingAction : AnAction() {
             return Pair(this, psiReferences)
         }
 
-    private fun renameLayout(project: Project, psiElement: XmlFile, list: List<PsiReference>) {
-        val newName = AndGuardCoinfigState.getInstance().randomLayoutResName
+    private fun renameLayout(project: Project, element: XmlFile, list: List<PsiReference>, newName: String) {
         ApplicationManager.getApplication().invokeAndWait {
-            psiElement.rename(newName, "XmlFile")
+            element.rename(newName, "XmlFile")
         }
         if (list.isNotEmpty()) {
             val newRefName = DataBindingUtil.convertFileNameToJavaClassName(newName) + "Binding"
@@ -142,10 +142,9 @@ class AndBindingAction : AnAction() {
             return Pair(first, psiReferences)
         }
 
-    private fun renameResId(project: Project, psiElement: XmlAttributeValue, list: List<PsiReference>) {
-        val newName = AndGuardCoinfigState.getInstance().randomIdResName
+    private fun renameResId(project: Project, element: XmlAttributeValue, list: List<PsiReference>, newName: String) {
         ApplicationManager.getApplication().invokeAndWait {
-            psiElement.rename(newName, "XmlId")
+            element.rename(newName, "XmlId")
         }
         if (list.isNotEmpty()) {
             val newRefName = DataBindingUtil.convertAndroidIdToJavaFieldName(newName)
