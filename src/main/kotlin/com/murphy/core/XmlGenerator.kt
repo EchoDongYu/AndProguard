@@ -8,14 +8,22 @@ import com.intellij.psi.xml.XmlTag
 import com.murphy.config.AndGuardCoinfigState
 import java.util.*
 
+const val TAG_INTEGER = "integer"
+
 fun processXml(psi: XmlFile, resIdList: MutableList<String> = LinkedList()) {
     println("============================== ${psi.name} ==============================")
     val config = AndGuardCoinfigState.getInstance()
     val tagSeq = psi.childrenDfsSequence().filterIsInstance<XmlTag>()
     tagSeq.forEach { tag ->
         when (tag.name) {
-            TAG_STRING, TAG_STRING_ARRAY, TAG_STYLE, TAG_COLOR, TAG_DIMEN, TAG_ITEM -> {
+            TAG_STRING, TAG_STRING_ARRAY, TAG_INTEGER, TAG_INTEGER_ARRAY, TAG_STYLE, TAG_COLOR, TAG_DIMEN -> {
                 tag.getAttribute(ATTR_NAME)?.valueElement?.rename(config.randomIdResName, "Resource")
+            }
+
+            TAG_ITEM -> {
+                val name = tag.parentTag?.name
+                if (name != TAG_STYLE)
+                    tag.getAttribute(ATTR_NAME)?.valueElement?.rename(config.randomIdResName, "Resource")
             }
 
             else -> {
