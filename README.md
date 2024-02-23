@@ -1,6 +1,16 @@
-## 0. Desc
+[![Kotlin](https://img.shields.io/badge/%20language-Kotlin-blueviolet.svg)](https://kotlinlang.org/)
+[![IntelliJ Idea Plugin](https://img.shields.io/badge/plugin-IntelliJ%20%20Idea-blue.svg)](https://plugins.jetbrains.com/)
+[![Android Studio Plugin](https://img.shields.io/badge/plugin-AndroidStudio-green.svg)](https://plugins.jetbrains.com/)
 
-### How to use
+***Read this in other languages: [English](README.md), [简体中文](README.zh.md).***
+
+[Install from Plugin Marketplace](https://plugins.jetbrains.com/)
+
+## AndGuard
+
+This is a plugin to obfuscate resources
+
+### Easy use
 
     Tips clean build, viewbinding cache...
 
@@ -30,7 +40,3 @@
 `{[1000](1)[0100](3,9)}(1,2)<Activity>` 表示1至2个伪单词，后接 `Activity`
 
 #### Tips invalid name
-
-## TODO
-
-### 1. mapping-log
