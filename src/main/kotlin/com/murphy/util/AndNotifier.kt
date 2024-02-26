@@ -6,21 +6,21 @@ import com.intellij.openapi.project.Project
 
 fun notifyInfo(project: Project?, content: String) {
     NotificationGroupManager.getInstance()
-        .getNotificationGroup("AndGuard Notification")
-        .createNotification("AndGuard finished!", content, NotificationType.INFORMATION)
+        .getNotificationGroup("AndProguard Notification")
+        .createNotification(title = "AndProguard finished!", content = content, type = NotificationType.INFORMATION)
         .notify(project)
 }
 
 fun notifyWarn(project: Project?, content: String) {
     NotificationGroupManager.getInstance()
-        .getNotificationGroup("AndGuard Notification")
-        .createNotification("AndGuard warning!", content, NotificationType.WARNING)
+        .getNotificationGroup("AndProguard Notification")
+        .createNotification(title = "AndProguard warning!", content = content, type = NotificationType.WARNING)
         .notify(project)
 }
 
 fun notifyError(project: Project?, content: String) {
     NotificationGroupManager.getInstance()
-        .getNotificationGroup("AndGuard Notification")
-        .createNotification("AndGuard failed!", content, NotificationType.ERROR)
+        .getNotificationGroup("AndProguard Notification")
+        .createNotification(title = "AndProguard failed!", content = content, type = NotificationType.ERROR)
         .notify(project)
 }

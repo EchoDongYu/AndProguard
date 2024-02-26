@@ -1,6 +1,6 @@
 package com.murphy.util
 
-const val PLUGIN_NAME = "AndGuard"
+const val PLUGIN_NAME = "AndProguard"
 
 const val CHAR_UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 

@@ -9,10 +9,10 @@ import com.murphy.util.RandomNode
 import com.murphy.util.RandomNode.Companion.parseNode
 
 @State(
-    name = "AndGuardCoinfigState",
-    storages = [Storage("AndGuardCoinfigState.xml")],
+    name = "AndProguardCoinfigState",
+    storages = [Storage("AndProguardCoinfigState.xml")],
 )
-class AndGuardCoinfigState : PersistentStateComponent<AndGuardCoinfigState> {
+class AndProguardCoinfigState : PersistentStateComponent<AndProguardCoinfigState> {
     var classRule: String = "{[1000](1)[0100](3,9)}(2,3)"
     var methodRule: String = "[0100](4,12){[1000](1)[0100](3,9)}(0,2)"
     var fieldRule: String = "[0100](3,9){[1000](1)[0100](3,8)}(0,1)"
@@ -36,9 +36,9 @@ class AndGuardCoinfigState : PersistentStateComponent<AndGuardCoinfigState> {
     val randomIdResName get() = randomNodeList[3].randomString
     val randomLayoutResName get() = randomNodeList[4].randomString
 
-    override fun getState(): AndGuardCoinfigState = this
+    override fun getState(): AndProguardCoinfigState = this
 
-    override fun loadState(state: AndGuardCoinfigState) {
+    override fun loadState(state: AndProguardCoinfigState) {
         XmlSerializerUtil.copyBean(state, this)
     }
 
@@ -57,8 +57,8 @@ class AndGuardCoinfigState : PersistentStateComponent<AndGuardCoinfigState> {
     }
 
     companion object {
-        fun getInstance(): AndGuardCoinfigState {
-            return ApplicationManager.getApplication().getService(AndGuardCoinfigState::class.java)
+        fun getInstance(): AndProguardCoinfigState {
+            return ApplicationManager.getApplication().getService(AndProguardCoinfigState::class.java)
         }
     }
 }

@@ -6,24 +6,24 @@
 
 [Install from Plugin Marketplace](https://plugins.jetbrains.com/)
 
-## About AndGuard
+## About AndProguard
 
-- AndGuard is a plugin that helps obfuscate source files, supports multiple languages `Java/Kotlin/Xml`,
+- AndProguard is a plugin that helps obfuscate source files, supports multiple languages `Java/Kotlin/Xml`,
   and supports batch obfuscation.
-- AndGuard performs renaming by looking for all elements that can be modified, including: class names,
+- AndProguard performs renaming by looking for all elements that can be modified, including: class names,
   file names, method/function names, field/property names, parameter names, and local variable names in `Java/Kotlin`,
   attribute names and file names in `Xml`.
 - Its principle is based on the renaming function of the official plugin, which automatically handles all referenced
-  changes when modifying a `psiElement`; AndGuard is an extension of this functionality.
+  changes when modifying a `psiElement`; AndProguard is an extension of this functionality.
 
-> #### What can AndGuard do?
+> #### What can AndProguard do?
 >- Application hardening, Increase the difficulty of aab and apk decompilation.
 >- Reduce the duplication rate of aab packages, Avoid excessive similarity detection, which may lead to application
    remove from the `Google Play` or account suspension.
 
 ### Warning⚠️
 
-- **AndGuard operates locally, and task execution is irreversible, so be sure to back up your code or operate
+- **AndProguard operates locally, and task execution is irreversible, so be sure to back up your code or operate
   under version branch tool management, otherwise the code will be difficult to restore.**
 - **Renaming will be associated with invalid references in the `build` directory,
   so be sure to clean the `build` directory before execution: execute `Build-Clean Project`,
@@ -31,19 +31,19 @@
 
 ### Easy use
 
-Just select the files or folders you want to obfuscate, then select `AndGuard` or `ViewBinding` from
+Just select the files or folders you want to obfuscate, then select `AndProguard` or `ViewBinding` from
 the right-click menu:
 
-![AndGuard](img/AndGuard.gif)
+![AndProguard](img/AndProguard.gif)
 ![ViewBinding](img/ViewBinding.gif)
 
-- `AndGuard` supports working with `Java/Kotlin/Xml` files or folders.
+- `AndProguard` supports working with `Java/Kotlin/Xml` files or folders.
 - `ViewBinding` only supports the use of `Xml` files or folders, and the `ViewBinding` reference will be
   automatically processed when modifying `Xml`.
 
 ### Settings
 
-![AndGuard](img/config.PNG)
+![AndProguard](img/config.PNG)
 
 - **[Custom naming](#custom-naming)**：Supports custom naming rules for class names, method names, variable names, etc.
 - Exclude package：Fill the package name. Use the symbol `;` to connect multiple package names.
@@ -79,7 +79,7 @@ followed by 3 to 9 lowercase letters
 
 ### Note
 
-- AndGuard does not invade the packaging process and cannot obfuscate the compiled `Class` file.
+- AndProguard does not invade the packaging process and cannot obfuscate the compiled `Class` file.
   It needs to be executed before packaging.
 - The custom naming rules must comply with the naming standards,
   otherwise the name replacement will not be executed or unpredictable errors will occur.

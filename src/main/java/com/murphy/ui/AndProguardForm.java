@@ -2,7 +2,7 @@ package com.murphy.ui;
 
 import javax.swing.*;
 
-public class AndGuardForm {
+public class AndProguardForm {
     private JPanel rootPane;
     private JCheckBox skipData;
     private JTextField classRule;
@@ -12,7 +12,7 @@ public class AndGuardForm {
     private JTextField layoutResRule;
     private JTextField excludePath;
 
-    public AndGuardForm(boolean skipData, String classRule, String methodRule, String fieldRule, String idResRule, String layoutResRule, String excludePath) {
+    public AndProguardForm(boolean skipData, String classRule, String methodRule, String fieldRule, String idResRule, String layoutResRule, String excludePath) {
         this.skipData.setSelected(skipData);
         this.classRule.setText(classRule);
         this.methodRule.setText(methodRule);

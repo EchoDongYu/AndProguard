@@ -1,13 +1,13 @@
 package com.murphy.config
 
 import com.intellij.openapi.options.Configurable
-import com.murphy.ui.AndGuardForm
+import com.murphy.ui.AndProguardForm
 import javax.swing.JComponent
 
-class AndGuardConfigurable : Configurable {
+class AndProguardConfigurable : Configurable {
     private val form by lazy {
-        val state = AndGuardCoinfigState.getInstance()
-        AndGuardForm(
+        val state = AndProguardCoinfigState.getInstance()
+        AndProguardForm(
             state.skipData,
             state.classRule,
             state.methodRule,
@@ -23,7 +23,7 @@ class AndGuardConfigurable : Configurable {
     }
 
     override fun isModified(): Boolean {
-        val state = AndGuardCoinfigState.getInstance()
+        val state = AndProguardCoinfigState.getInstance()
         return state.classRule != form.classRule || state.methodRule != form.methodRule ||
                 state.fieldRule != form.fieldRule || state.idResRule != form.idResRule ||
                 state.layoutResRule != form.layoutResRule || state.skipData != form.skipData ||
@@ -31,7 +31,7 @@ class AndGuardConfigurable : Configurable {
     }
 
     override fun apply() {
-        val state = AndGuardCoinfigState.getInstance()
+        val state = AndProguardCoinfigState.getInstance()
         state.classRule = form.classRule
         state.methodRule = form.methodRule
         state.fieldRule = form.fieldRule
@@ -42,7 +42,7 @@ class AndGuardConfigurable : Configurable {
     }
 
     override fun reset() {
-        val state = AndGuardCoinfigState.getInstance()
+        val state = AndProguardCoinfigState.getInstance()
         form.classRule = state.classRule
         form.methodRule = state.methodRule
         form.fieldRule = state.fieldRule
@@ -52,5 +52,5 @@ class AndGuardConfigurable : Configurable {
         form.excludePath = state.excludePath
     }
 
-    override fun getDisplayName(): String = "AndGuard Config"
+    override fun getDisplayName(): String = "AndProguard Config"
 }

@@ -7,7 +7,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.refactoring.RefactoringFactory
-import com.murphy.config.AndGuardCoinfigState
+import com.murphy.config.AndProguardCoinfigState
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.idea.search.isImportUsage
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -61,7 +61,7 @@ fun PsiNamedElement.renameReference() {
         .mapNotNull { it.getNamedElement(name) }
         .distinct().partition { it is PsiField }
         .run {
-            val config = AndGuardCoinfigState.getInstance()
+            val config = AndProguardCoinfigState.getInstance()
             second.forEach { it.rename(config.randomFieldName, "Reference") }
             first.forEach { it.rename(config.randomFieldName, "Reference") }
         }

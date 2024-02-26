@@ -4,12 +4,12 @@ import com.intellij.psi.PsiField
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.impl.source.*
 import com.intellij.psi.impl.source.tree.java.PsiLocalVariableImpl
-import com.murphy.config.AndGuardCoinfigState
+import com.murphy.config.AndProguardCoinfigState
 import org.jetbrains.kotlin.j2k.isMainMethod
 
 fun processJava(psi: PsiNamedElement) {
     println("============================== ${psi.name} ==============================")
-    val config = AndGuardCoinfigState.getInstance()
+    val config = AndProguardCoinfigState.getInstance()
     val elementSeq = psi.childrenDfsSequence().filterIsInstance<PsiNamedElement>()
     elementSeq.partition { it is PsiFieldImpl }.run {
         val skipElements: MutableSet<PsiField> = HashSet()

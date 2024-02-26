@@ -6,36 +6,36 @@
 
 [Install from Plugin Marketplace](https://plugins.jetbrains.com/)
 
-## AndGuard 简介
+## AndProguard 简介
 
-- AndGuard 是一个帮助混淆**源文件**的插件，支持多种语言`Java/Kotlin/Xml`，支持批量混淆。
-- AndGuard 执行时会查找所有能修改的元素执行重命名，包括`Java/Kotlin`中的：类名、文件名、方法/函数名、字段/属性名、参数名和局部变量名，
+- AndProguard 是一个帮助混淆**源文件**的插件，支持多种语言`Java/Kotlin/Xml`，支持批量混淆。
+- AndProguard 执行时会查找所有能修改的元素执行重命名，包括`Java/Kotlin`中的：类名、文件名、方法/函数名、字段/属性名、参数名和局部变量名，
   `Xml`中的属性名和文件名。
-- 它的原理是基于官方插件的重命名功能，在修改元素时会自动处理所有引用的修改；AndGuard 是在此基础上功能扩展。
+- 它的原理是基于官方插件的重命名功能，在修改元素时会自动处理所有引用的修改；AndProguard 是在此基础上功能扩展。
 
-> #### AndGuard 能做什么？
+> #### AndProguard 能做什么？
 >- 应用加固，增加 aab、apk 反编译的难度。
 >- 降低 aab 包查重率，避免上架`Google Play`因查重率过高，导致下架或封号问题。
 
 ### 警告⚠️
 
-- **AndGuard 是在本地操作，且任务执行是不可逆的，故务必做好代码备份或在版本分支工具管理下操作，否则代码将很难还原**
+- **AndProguard 是在本地操作，且任务执行是不可逆的，故务必做好代码备份或在版本分支工具管理下操作，否则代码将很难还原**
 - **重命名会关联到`build`目录下的无效引用，故执行前务必清理`build`目录：执行 `Build-Clean Project`，
   否则会出现阻塞任务的窗口**
 
 ### 简单使用
 
-只需选择想要混淆的文件或文件夹，右键菜单选择 `AndGuard` 或 `ViewBinding`：
+只需选择想要混淆的文件或文件夹，右键菜单选择 `AndProguard` 或 `ViewBinding`：
 
-![AndGuard](img/AndGuard.gif)
+![AndProguard](img/AndProguard.gif)
 ![ViewBinding](img/ViewBinding.gif)
 
-- `AndGuard` 支持对 `Java/Kotlin/Xml` 文件或文件夹使用。
+- `AndProguard` 支持对 `Java/Kotlin/Xml` 文件或文件夹使用。
 - `ViewBinding` 仅支持对 `Xml` 文件或文件夹使用，修改 `Xml` 时会自动处理 `ViewBinding` 引用。
 
 ### 设置
 
-![AndGuard](img/config.PNG)
+![AndProguard](img/config.PNG)
 
 - **[自定义命名规则（Custom naming）](#自定义命名规则)**：支持自定以类名，方法名，变量名等等命名规则。
 - 白名单（Exclude package）：填写包名，多个包名使用符号`;`衔接，对文件夹执行任务时会忽略填写的目录。
@@ -69,7 +69,7 @@
 
 ### 注意事项
 
-- AndGuard 不侵入打包流程，无法混淆编译后的 `Class` 文件，需要在打包前执行。
+- AndProguard 不侵入打包流程，无法混淆编译后的 `Class` 文件，需要在打包前执行。
 - 自定义命名规则务必保证符合命名规范，否则替换名字将会不执行或出现不可预知的错误。
 - 复用规则`{}`不宜嵌套过深，会影响执行效率。
 

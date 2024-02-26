@@ -22,7 +22,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
-import com.murphy.config.AndGuardCoinfigState
+import com.murphy.config.AndProguardCoinfigState
 import com.murphy.core.childrenDfsSequence
 import com.murphy.core.computeTime
 import com.murphy.core.rename
@@ -40,7 +40,7 @@ class AndBindingAction : AnAction() {
         val project = action.project ?: return
         val dateStart = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
         println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> $dateStart [Refactor Start] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
-        val config = AndGuardCoinfigState.getInstance()
+        val config = AndProguardCoinfigState.getInstance()
         config.initRandomNode()
         val startTime = System.currentTimeMillis()
         var count = 0
