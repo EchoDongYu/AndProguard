@@ -43,6 +43,7 @@ tasks {
     }
 
     publishPlugin {
+        // perm:eXVfZG9uZw==.OTItOTY0NQ==.SSkneAGYcSOioMXzlmCvsGxFPAGKQx
         token.set(System.getenv("PUBLISH_TOKEN"))
     }
 }
