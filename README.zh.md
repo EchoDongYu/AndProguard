@@ -1,10 +1,10 @@
 [![Kotlin](https://img.shields.io/badge/%20language-Kotlin-blueviolet.svg)](https://kotlinlang.org/)
-[![IntelliJ Idea Plugin](https://img.shields.io/badge/plugin-IntelliJ%20%20Idea-blue.svg)](https://plugins.jetbrains.com/)
-[![Android Studio Plugin](https://img.shields.io/badge/plugin-AndroidStudio-green.svg)](https://plugins.jetbrains.com/)
+[![IntelliJ Idea Plugin](https://img.shields.io/badge/plugin-IntelliJ%20%20Idea-blue.svg)](https://plugins.jetbrains.com/plugin/23840-andproguard)
+[![Android Studio Plugin](https://img.shields.io/badge/plugin-AndroidStudio-green.svg)](https://plugins.jetbrains.com/plugin/23840-andproguard)
 
 *其他语言版本: [English](README.md), **[简体中文](README.zh.md).***
 
-[Install from Plugin Marketplace](https://plugins.jetbrains.com/)
+[Install from Plugin Marketplace](https://plugins.jetbrains.com/plugin/23840-andproguard)
 
 ## AndProguard 简介
 
