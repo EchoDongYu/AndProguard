@@ -9,10 +9,10 @@ import com.murphy.util.RandomNode
 import com.murphy.util.RandomNode.Companion.parseNode
 
 @State(
-    name = "AndProguardCoinfigState",
-    storages = [Storage("AndProguardCoinfigState.xml")],
+    name = "AndProguardConfigState",
+    storages = [Storage("AndProguardConfigState.xml")],
 )
-class AndProguardCoinfigState : PersistentStateComponent<AndProguardCoinfigState> {
+class AndProguardConfigState : PersistentStateComponent<AndProguardConfigState> {
     var classRule: String = "{[1000](1)[0100](3,9)}(2,3)"
     var methodRule: String = "[0100](4,12){[1000](1)[0100](3,9)}(0,2)"
     var fieldRule: String = "[0100](3,9){[1000](1)[0100](3,8)}(0,1)"
@@ -28,7 +28,7 @@ class AndProguardCoinfigState : PersistentStateComponent<AndProguardCoinfigState
      */
     var skipData: Boolean = true
     private lateinit var randomNodeList: List<RandomNode>
-    lateinit var exlcudeList: List<String>
+    lateinit var excludeList: List<String>
 
     val randomClassName get() = randomNodeList[0].randomString
     val randomMethodName get() = randomNodeList[1].randomString
@@ -36,9 +36,9 @@ class AndProguardCoinfigState : PersistentStateComponent<AndProguardCoinfigState
     val randomIdResName get() = randomNodeList[3].randomString
     val randomLayoutResName get() = randomNodeList[4].randomString
 
-    override fun getState(): AndProguardCoinfigState = this
+    override fun getState(): AndProguardConfigState = this
 
-    override fun loadState(state: AndProguardCoinfigState) {
+    override fun loadState(state: AndProguardConfigState) {
         XmlSerializerUtil.copyBean(state, this)
     }
 
@@ -52,13 +52,13 @@ class AndProguardCoinfigState : PersistentStateComponent<AndProguardCoinfigState
         )
     }
 
-    fun initExcludePakage() {
-        exlcudeList = excludePath.split(';').filter { it.isNotBlank() }
+    fun initExcludePackage() {
+        excludeList = excludePath.split(';').filter { it.isNotBlank() }
     }
 
     companion object {
-        fun getInstance(): AndProguardCoinfigState {
-            return ApplicationManager.getApplication().getService(AndProguardCoinfigState::class.java)
+        fun getInstance(): AndProguardConfigState {
+            return ApplicationManager.getApplication().getService(AndProguardConfigState::class.java)
         }
     }
 }

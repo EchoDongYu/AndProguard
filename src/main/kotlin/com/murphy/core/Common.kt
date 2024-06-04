@@ -7,7 +7,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.refactoring.RefactoringFactory
-import com.murphy.config.AndProguardCoinfigState
+import com.murphy.config.AndProguardConfigState
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.idea.search.isImportUsage
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -19,10 +19,10 @@ fun PsiDirectory.skip(list: List<String>): Boolean {
     return list.firstOrNull { path.contains(it) } != null
 }
 
-fun PsiDirectory.fileList(exlcude: List<String>): MutableList<PsiFile> {
+fun PsiDirectory.fileList(exclude: List<String>): MutableList<PsiFile> {
     val list: MutableList<PsiFile> = ArrayList()
-    if (skip(exlcude)) return list
-    subdirectories.forEach { list.addAll(it.fileList(exlcude)) }
+    if (skip(exclude)) return list
+    subdirectories.forEach { list.addAll(it.fileList(exclude)) }
     list.addAll(files)
     return list
 }
@@ -61,7 +61,7 @@ fun PsiNamedElement.renameReference() {
         .mapNotNull { it.getNamedElement(name) }
         .distinct().partition { it is PsiField }
         .run {
-            val config = AndProguardCoinfigState.getInstance()
+            val config = AndProguardConfigState.getInstance()
             second.forEach { it.rename(config.randomFieldName, "Reference") }
             first.forEach { it.rename(config.randomFieldName, "Reference") }
         }

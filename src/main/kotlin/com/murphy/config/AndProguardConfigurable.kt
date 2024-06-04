@@ -6,7 +6,7 @@ import javax.swing.JComponent
 
 class AndProguardConfigurable : Configurable {
     private val form by lazy {
-        val state = AndProguardCoinfigState.getInstance()
+        val state = AndProguardConfigState.getInstance()
         AndProguardForm(
             state.skipData,
             state.classRule,
@@ -23,7 +23,7 @@ class AndProguardConfigurable : Configurable {
     }
 
     override fun isModified(): Boolean {
-        val state = AndProguardCoinfigState.getInstance()
+        val state = AndProguardConfigState.getInstance()
         return state.classRule != form.classRule || state.methodRule != form.methodRule ||
                 state.fieldRule != form.fieldRule || state.idResRule != form.idResRule ||
                 state.layoutResRule != form.layoutResRule || state.skipData != form.skipData ||
@@ -31,7 +31,7 @@ class AndProguardConfigurable : Configurable {
     }
 
     override fun apply() {
-        val state = AndProguardCoinfigState.getInstance()
+        val state = AndProguardConfigState.getInstance()
         state.classRule = form.classRule
         state.methodRule = form.methodRule
         state.fieldRule = form.fieldRule
@@ -42,7 +42,7 @@ class AndProguardConfigurable : Configurable {
     }
 
     override fun reset() {
-        val state = AndProguardCoinfigState.getInstance()
+        val state = AndProguardConfigState.getInstance()
         form.classRule = state.classRule
         form.methodRule = state.methodRule
         form.fieldRule = state.fieldRule

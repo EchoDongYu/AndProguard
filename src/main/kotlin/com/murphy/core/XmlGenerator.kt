@@ -5,14 +5,14 @@ import com.android.resources.ResourceType
 import com.android.tools.idea.res.psi.ResourceReferencePsiElement
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
-import com.murphy.config.AndProguardCoinfigState
+import com.murphy.config.AndProguardConfigState
 import java.util.*
 
 const val TAG_INTEGER = "integer"
 
 fun processXml(psi: XmlFile, resIdList: MutableList<String> = LinkedList()) {
     println("============================== ${psi.name} ==============================")
-    val config = AndProguardCoinfigState.getInstance()
+    val config = AndProguardConfigState.getInstance()
     val tagSeq = psi.childrenDfsSequence().filterIsInstance<XmlTag>()
     tagSeq.forEach { tag ->
         when (tag.name) {

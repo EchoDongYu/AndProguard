@@ -38,7 +38,7 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup id="AndProguard Notification" displayType="STICKY_BALLOON"/>
-        <applicationService serviceImplementation="com.murphy.config.AndProguardCoinfigState"/>
+        <applicationService serviceImplementation="com.murphy.config.AndProguardConfigState"/>
         <applicationConfigurable
                 parentId="tools"
                 id="and-proguard-config"

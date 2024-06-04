@@ -1,11 +1,11 @@
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.9.21"
+    id("org.jetbrains.kotlin.jvm") version "1.9.22"
     id("org.jetbrains.intellij") version "1.17.2"
 }
 
-group = "com.murphy"
-version = "3.5.6"
+group = "com.murphy.proguard"
+version = "3.6.1"
 
 repositories {
     mavenCentral()
@@ -43,7 +43,8 @@ tasks {
     }
 
     publishPlugin {
-        // perm:eXVfZG9uZw==.OTItOTY0NQ==.SSkneAGYcSOioMXzlmCvsGxFPAGKQx
-        token.set(System.getenv("PUBLISH_TOKEN"))
+        // perm:eXVfZG9uZw==.OTItMTAxODM=.OxxeFjW1mdccTSV8Xk1LybzC44YuOv
+        token.set(System.getenv("perm:eXVfZG9uZw==.OTItMTAxODM=.OxxeFjW1mdccTSV8Xk1LybzC44YuOv"))
+        channels.set(listOf("eap"))
     }
 }

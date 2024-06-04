@@ -1,7 +1,7 @@
 package com.murphy.core
 
 import com.intellij.psi.PsiNamedElement
-import com.murphy.config.AndProguardCoinfigState
+import com.murphy.config.AndProguardConfigState
 import com.murphy.util.KOTLIN_SUFFIX
 import org.jetbrains.kotlin.idea.isMainFunction
 import org.jetbrains.kotlin.idea.util.isAnonymousFunction
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.psi.*
 
 fun processKotlin(psi: PsiNamedElement) {
     println("============================== ${psi.name} ==============================")
-    val config = AndProguardCoinfigState.getInstance()
+    val config = AndProguardConfigState.getInstance()
     val elementSeq = psi.childrenDfsSequence().filterIsInstance<PsiNamedElement>()
     elementSeq.partition { it is KtParameter }.run {
         val skipElements: MutableSet<KtParameter> = HashSet()
