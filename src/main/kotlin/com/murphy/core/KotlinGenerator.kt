@@ -22,9 +22,15 @@ fun processKotlin(psi: PsiNamedElement) {
                 }
 
                 is KtClass -> {
-                    if (config.skipData && it.isData()) skipElements.addAll(it.primaryConstructorParameters)
+                    if (config.skipData && it.isData())
+                        skipElements.addAll(it.primaryConstructorParameters)
                     it.renameReference()
                     it.rename(config.randomClassName, "Class")
+                }
+
+                is KtObjectDeclaration -> {
+                    if (!it.isObjectLiteral() && !it.isCompanion())
+                        it.rename(config.randomClassName, "Object Class")
                 }
 
                 is KtNamedFunction -> {
