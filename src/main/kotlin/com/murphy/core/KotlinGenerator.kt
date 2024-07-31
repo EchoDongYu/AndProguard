@@ -15,6 +15,7 @@ fun processKotlin(psi: PsiNamedElement) {
     elementSeq.partition { it is KtParameter }.run {
         val skipElements: MutableSet<KtParameter> = HashSet()
         second.forEach {
+            if (it.isValid.not()) return@forEach
             when (it) {
                 is KtFile -> {
                     if (it.classes.size != 1 || it.hasTopLevelCallables())
@@ -45,6 +46,7 @@ fun processKotlin(psi: PsiNamedElement) {
             }
         }
         first.subtract(skipElements).forEach {
+            if (it.isValid.not()) return@forEach
             if (!(it as KtParameter).hasModifier(KtTokens.OVERRIDE_KEYWORD))
                 it.rename(config.randomFieldName, "Parameter")
         }

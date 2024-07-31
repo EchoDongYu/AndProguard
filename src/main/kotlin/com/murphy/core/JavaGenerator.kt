@@ -14,6 +14,7 @@ fun processJava(psi: PsiNamedElement) {
     elementSeq.partition { it is PsiFieldImpl }.run {
         val skipElements: MutableSet<PsiField> = HashSet()
         second.forEach {
+            if (it.isValid.not()) return@forEach
             when (it) {
                 is PsiAnonymousClassImpl -> return@forEach
                 is PsiClassImpl -> {
@@ -33,6 +34,7 @@ fun processJava(psi: PsiNamedElement) {
             }
         }
         first.subtract(skipElements).forEach {
+            if (it.isValid.not()) return@forEach
             it.rename(config.randomFieldName, "Field")
         }
     }
