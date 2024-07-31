@@ -14,7 +14,7 @@ fun processKotlin(psi: PsiNamedElement) {
     val elementSeq = psi.childrenDfsSequence().filterIsInstance<PsiNamedElement>()
     elementSeq.partition { it is KtParameter }.run {
         val skipElements: MutableSet<KtParameter> = HashSet()
-        second.forEach {
+        second.reversed().forEach {
             if (it.isValid.not()) return@forEach
             when (it) {
                 is KtFile -> {

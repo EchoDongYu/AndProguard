@@ -13,7 +13,7 @@ fun processJava(psi: PsiNamedElement) {
     val elementSeq = psi.childrenDfsSequence().filterIsInstance<PsiNamedElement>()
     elementSeq.partition { it is PsiFieldImpl }.run {
         val skipElements: MutableSet<PsiField> = HashSet()
-        second.forEach {
+        second.reversed().forEach {
             if (it.isValid.not()) return@forEach
             when (it) {
                 is PsiAnonymousClassImpl -> return@forEach
