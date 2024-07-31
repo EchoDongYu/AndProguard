@@ -34,6 +34,8 @@ class AndProguardAction : AnAction() {
         when (psi) {
             is KtClassOrObject -> processKotlin(psi)
             is PsiClass -> processJava(psi)
+            is PsiJavaFile -> processJava(psi)
+            is KtFile -> processKotlin(psi)
             is XmlFile -> processXml(psi)
             is PsiBinaryFile -> psi.rename(config.randomLayoutResName, "File")
             is PsiDirectory -> {

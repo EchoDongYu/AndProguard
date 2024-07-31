@@ -13,11 +13,11 @@ import com.murphy.util.RandomNode.Companion.parseNode
     storages = [Storage("AndProguardConfigState.xml")],
 )
 class AndProguardConfigState : PersistentStateComponent<AndProguardConfigState> {
-    var classRule: String = "{[1000](1)[0100](3,9)}(2,3)"
-    var methodRule: String = "[0100](4,12){[1000](1)[0100](3,9)}(0,2)"
-    var fieldRule: String = "[0100](3,9){[1000](1)[0100](3,8)}(0,1)"
-    var idResRule: String = "[0100](4,7){<_>[0100](4,7)}(0,1)"
-    var layoutResRule: String = "[0100](4,7){<_>[0100](4,7)}(1,2)"
+    var classRule: String = "{[1000](1)[0100](6,12)}(2,3)"
+    var methodRule: String = "[0100](7,13){[1000](1)[0100](6,12)}(0,2)"
+    var fieldRule: String = "[0100](7,13){[1000](1)[0100](6,12)}(0,1)"
+    var idResRule: String = "[0100](7,11){<_>[0100](7,11)}(0,1)"
+    var layoutResRule: String = "[0100](7,11){<_>[0100](7,11)}(1,2)"
     var excludePath: String = ""
 
     /**
