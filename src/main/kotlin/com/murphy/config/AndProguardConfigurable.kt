@@ -13,8 +13,7 @@ class AndProguardConfigurable : Configurable {
             state.methodRule,
             state.fieldRule,
             state.idResRule,
-            state.layoutResRule,
-            state.excludePath
+            state.layoutResRule
         )
     }
 
@@ -26,8 +25,7 @@ class AndProguardConfigurable : Configurable {
         val state = AndProguardConfigState.getInstance()
         return state.classRule != form.classRule || state.methodRule != form.methodRule ||
                 state.fieldRule != form.fieldRule || state.idResRule != form.idResRule ||
-                state.layoutResRule != form.layoutResRule || state.skipData != form.skipData ||
-                state.excludePath != form.excludePath
+                state.layoutResRule != form.layoutResRule || state.skipData != form.skipData
     }
 
     override fun apply() {
@@ -38,7 +36,6 @@ class AndProguardConfigurable : Configurable {
         state.idResRule = form.idResRule
         state.layoutResRule = form.layoutResRule
         state.skipData = form.skipData
-        state.excludePath = form.excludePath
     }
 
     override fun reset() {
@@ -49,7 +46,6 @@ class AndProguardConfigurable : Configurable {
         form.idResRule = state.idResRule
         form.layoutResRule = state.layoutResRule
         form.skipData = state.skipData
-        form.excludePath = state.excludePath
     }
 
     override fun getDisplayName(): String = "AndProguard Config"

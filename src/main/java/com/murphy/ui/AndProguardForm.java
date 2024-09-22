@@ -10,16 +10,14 @@ public class AndProguardForm {
     private JTextField fieldRule;
     private JTextField idResRule;
     private JTextField layoutResRule;
-    private JTextField excludePath;
 
-    public AndProguardForm(boolean skipData, String classRule, String methodRule, String fieldRule, String idResRule, String layoutResRule, String excludePath) {
+    public AndProguardForm(boolean skipData, String classRule, String methodRule, String fieldRule, String idResRule, String layoutResRule) {
         this.skipData.setSelected(skipData);
         this.classRule.setText(classRule);
         this.methodRule.setText(methodRule);
         this.fieldRule.setText(fieldRule);
         this.idResRule.setText(idResRule);
         this.layoutResRule.setText(layoutResRule);
-        this.excludePath.setText(excludePath);
     }
 
     public JPanel getPanel() {
@@ -72,13 +70,5 @@ public class AndProguardForm {
 
     public void setSkipData(boolean skipData) {
         this.skipData.setSelected(skipData);
-    }
-
-    public String getExcludePath() {
-        return excludePath.getText();
-    }
-
-    public void setExcludePath(String excludePath) {
-        this.excludePath.setText(excludePath);
     }
 }

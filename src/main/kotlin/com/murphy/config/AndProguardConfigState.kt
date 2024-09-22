@@ -18,7 +18,6 @@ class AndProguardConfigState : PersistentStateComponent<AndProguardConfigState> 
     var fieldRule: String = "[0100](7,13){[1000](1)[0100](6,12)}(0,1)"
     var idResRule: String = "[0100](7,11){<_>[0100](7,11)}(0,1)"
     var layoutResRule: String = "[0100](7,11){<_>[0100](7,11)}(1,2)"
-    var excludePath: String = ""
 
     /**
      * @Scope：Java/Kotlin
@@ -28,7 +27,6 @@ class AndProguardConfigState : PersistentStateComponent<AndProguardConfigState> 
      */
     var skipData: Boolean = true
     private lateinit var randomNodeList: List<RandomNode>
-    lateinit var excludeList: List<String>
 
     val randomClassName get() = randomNodeList[0].randomString
     val randomMethodName get() = randomNodeList[1].randomString
@@ -50,10 +48,6 @@ class AndProguardConfigState : PersistentStateComponent<AndProguardConfigState> 
             idResRule.parseNode(),
             layoutResRule.parseNode()
         )
-    }
-
-    fun initExcludePackage() {
-        excludeList = excludePath.split(';').filter { it.isNotBlank() }
     }
 
     companion object {

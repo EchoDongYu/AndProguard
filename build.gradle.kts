@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.murphy.proguard"
-version = "3.6.10"
+version = "5.0.0"
 
 repositories {
     mavenCentral()
