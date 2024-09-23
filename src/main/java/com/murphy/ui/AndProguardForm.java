@@ -8,16 +8,18 @@ public class AndProguardForm {
     private JTextField classRule;
     private JTextField methodRule;
     private JTextField fieldRule;
-    private JTextField idResRule;
-    private JTextField layoutResRule;
+    private JTextField resourceRule;
+    private JTextField fileResRule;
+    private JTextField folderRule;
 
-    public AndProguardForm(boolean skipData, String classRule, String methodRule, String fieldRule, String idResRule, String layoutResRule) {
+    public AndProguardForm(boolean skipData, String classRule, String methodRule, String fieldRule, String resourceRule, String fileResRule, String folderRule) {
         this.skipData.setSelected(skipData);
         this.classRule.setText(classRule);
         this.methodRule.setText(methodRule);
         this.fieldRule.setText(fieldRule);
-        this.idResRule.setText(idResRule);
-        this.layoutResRule.setText(layoutResRule);
+        this.resourceRule.setText(resourceRule);
+        this.fileResRule.setText(fileResRule);
+        this.folderRule.setText(folderRule);
     }
 
     public JPanel getPanel() {
@@ -48,20 +50,28 @@ public class AndProguardForm {
         this.fieldRule.setText(fieldRule);
     }
 
-    public String getIdResRule() {
-        return idResRule.getText();
+    public String getResourceRule() {
+        return resourceRule.getText();
     }
 
-    public void setIdResRule(String idResRule) {
-        this.idResRule.setText(idResRule);
+    public void setResourceRule(String resourceRule) {
+        this.resourceRule.setText(resourceRule);
     }
 
-    public String getLayoutResRule() {
-        return layoutResRule.getText();
+    public String getFileResRule() {
+        return fileResRule.getText();
     }
 
-    public void setLayoutResRule(String layoutResRule) {
-        this.layoutResRule.setText(layoutResRule);
+    public void setFileResRule(String fileResRule) {
+        this.fileResRule.setText(fileResRule);
+    }
+
+    public String getFolderRule() {
+        return folderRule.getText();
+    }
+
+    public void setFolderRule(String folderRule) {
+        this.folderRule.setText(folderRule);
     }
 
     public boolean getSkipData() {

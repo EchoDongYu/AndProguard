@@ -9,29 +9,31 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.psi.PsiNamedElement
-import com.murphy.config.AndProguardConfigState
+import com.murphy.config.AndConfigState
 import com.murphy.core.*
 import com.murphy.util.PLUGIN_NAME
 import com.murphy.util.notifyError
 import com.murphy.util.notifyInfo
 import java.util.*
 
-class AndProguardAction : AnAction() {
+class ProguardBatchAction : AnAction() {
 
     override fun actionPerformed(action: AnActionEvent) {
         val psi = action.getData(PlatformDataKeys.PSI_ELEMENT) ?: return
         val dateStart = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
         println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> $dateStart [Refactor Start] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
-        AndProguardConfigState.getInstance().initRandomNode()
+        AndConfigState.getInstance().initRandomNode()
         val startTime = System.currentTimeMillis()
+        val generators = arrayOf(
+            KotlinPreGenerator, JavaPreGenerator, KotlinGenerator, JavaGenerator,
+            XmlGenerator, BinaryFileGenerator, FolderGenerator
+        )
         ProgressManager.getInstance().run(object : Task.Modal(action.project, PLUGIN_NAME, false) {
             override fun run(indicator: ProgressIndicator) {
                 indicator.isIndeterminate = false
                 indicator.fraction = 0.0
-                runReadAction { psi.childrenDfsSequence().filterIsInstance<PsiNamedElement>() }.run {
-                    processKotlin(indicator)
-                    processJava(indicator)
-                    processXml(indicator)
+                runReadAction { psi.childrenDfsSequence().filterIsInstance<PsiNamedElement>().toList() }.run {
+                    generators.forEach { it.process(this, indicator) }
                 }
             }
 

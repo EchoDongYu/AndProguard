@@ -12,12 +12,13 @@ import com.murphy.util.RandomNode.Companion.parseNode
     name = "AndProguardConfigState",
     storages = [Storage("AndProguardConfigState.xml")],
 )
-class AndProguardConfigState : PersistentStateComponent<AndProguardConfigState> {
+class AndConfigState : PersistentStateComponent<AndConfigState> {
     var classRule: String = "{[1000](1)[0100](6,12)}(2,3)"
     var methodRule: String = "[0100](7,13){[1000](1)[0100](6,12)}(0,2)"
     var fieldRule: String = "[0100](7,13){[1000](1)[0100](6,12)}(0,1)"
-    var idResRule: String = "[0100](7,11){<_>[0100](7,11)}(0,1)"
-    var layoutResRule: String = "[0100](7,11){<_>[0100](7,11)}(1,2)"
+    var resourceRule: String = "[0100](7,11){<_>[0100](7,11)}(0,1)"
+    var fileResRule: String = "[0100](7,11){<_>[0100](7,11)}(1,2)"
+    var folderRule: String = ""
 
     /**
      * @Scope：Java/Kotlin
@@ -31,12 +32,13 @@ class AndProguardConfigState : PersistentStateComponent<AndProguardConfigState> 
     val randomClassName get() = randomNodeList[0].randomString
     val randomMethodName get() = randomNodeList[1].randomString
     val randomFieldName get() = randomNodeList[2].randomString
-    val randomIdResName get() = randomNodeList[3].randomString
-    val randomLayoutResName get() = randomNodeList[4].randomString
+    val randomResourceName get() = randomNodeList[3].randomString
+    val randomFileResName get() = randomNodeList[4].randomString
+    val randomFolderName get() = randomNodeList[5].randomString
 
-    override fun getState(): AndProguardConfigState = this
+    override fun getState(): AndConfigState = this
 
-    override fun loadState(state: AndProguardConfigState) {
+    override fun loadState(state: AndConfigState) {
         XmlSerializerUtil.copyBean(state, this)
     }
 
@@ -45,14 +47,15 @@ class AndProguardConfigState : PersistentStateComponent<AndProguardConfigState> 
             classRule.parseNode(),
             methodRule.parseNode(),
             fieldRule.parseNode(),
-            idResRule.parseNode(),
-            layoutResRule.parseNode()
+            resourceRule.parseNode(),
+            fileResRule.parseNode(),
+            folderRule.parseNode()
         )
     }
 
     companion object {
-        fun getInstance(): AndProguardConfigState {
-            return ApplicationManager.getApplication().getService(AndProguardConfigState::class.java)
+        fun getInstance(): AndConfigState {
+            return ApplicationManager.getApplication().getService(AndConfigState::class.java)
         }
     }
 }

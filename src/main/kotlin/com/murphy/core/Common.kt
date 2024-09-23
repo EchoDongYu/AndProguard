@@ -1,6 +1,7 @@
 package com.murphy.core
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runReadAction
 import com.intellij.psi.*
 import com.intellij.psi.impl.getFieldOfGetter
 import com.intellij.psi.impl.getFieldOfSetter
@@ -18,8 +19,9 @@ fun PsiElement.childrenDfsSequence(): Sequence<PsiElement> =
     }
 
 fun PsiNamedElement.rename(newName: String, desc: String) {
-    if (!isValid) return
-    println(String.format("[$desc] %s >>> %s", name, newName))
+    val pair = runReadAction { Pair(!isValid, name) }
+    if (pair.first) return
+    println(String.format("[$desc] %s >>> %s", pair.second, newName))
     ApplicationManager.getApplication().invokeAndWait {
         RefactoringFactory.getInstance(project)
             .createRename(this, newName, false, false)
@@ -27,9 +29,10 @@ fun PsiNamedElement.rename(newName: String, desc: String) {
     }
 }
 
-fun XmlAttributeValue.rename(newName: String, desc: String) {
-    if (!isValid) return
-    println(String.format("[$desc] %s >>> %s", value, newName))
+fun XmlAttributeValue.renameX(newName: String, desc: String) {
+    val pair = runReadAction { Pair(!isValid, value) }
+    if (pair.first) return
+    println(String.format("[$desc] %s >>> %s", pair.second, newName))
     ApplicationManager.getApplication().invokeAndWait {
         RefactoringFactory.getInstance(project)
             .createRename(this, newName, false, false)
@@ -37,9 +40,13 @@ fun XmlAttributeValue.rename(newName: String, desc: String) {
     }
 }
 
-fun PsiMethod.isSetter() = name.startsWith("set")
-fun PsiMethod.isGetterOrSetter() = name.run { startsWith("set") || startsWith("get") || startsWith("is") }
-fun PsiMethod.getFieldOfGetterOrSetter() = if (isSetter()) getFieldOfSetter(this) else getFieldOfGetter(this)
+val PsiMethod.isSetter
+    get() = runReadAction { name.startsWith("set") }
+val PsiMethod.isGetterOrSetter
+    get() = runReadAction { name.run { startsWith("set") || startsWith("get") || startsWith("is") } }
+val PsiMethod.fieldOfGetterOrSetter
+    get() = if (isSetter) runReadAction { getFieldOfSetter(this) }
+    else runReadAction { getFieldOfGetter(this) }
 
 fun computeTime(startTime: Long): String {
     val time = System.currentTimeMillis() - startTime

@@ -4,16 +4,17 @@ import com.intellij.openapi.options.Configurable
 import com.murphy.ui.AndProguardForm
 import javax.swing.JComponent
 
-class AndProguardConfigurable : Configurable {
+class AndConfigurable : Configurable {
     private val form by lazy {
-        val state = AndProguardConfigState.getInstance()
+        val state = AndConfigState.getInstance()
         AndProguardForm(
             state.skipData,
             state.classRule,
             state.methodRule,
             state.fieldRule,
-            state.idResRule,
-            state.layoutResRule
+            state.resourceRule,
+            state.fileResRule,
+            state.folderRule
         )
     }
 
@@ -22,29 +23,32 @@ class AndProguardConfigurable : Configurable {
     }
 
     override fun isModified(): Boolean {
-        val state = AndProguardConfigState.getInstance()
+        val state = AndConfigState.getInstance()
         return state.classRule != form.classRule || state.methodRule != form.methodRule ||
-                state.fieldRule != form.fieldRule || state.idResRule != form.idResRule ||
-                state.layoutResRule != form.layoutResRule || state.skipData != form.skipData
+                state.fieldRule != form.fieldRule || state.resourceRule != form.resourceRule ||
+                state.fileResRule != form.fileResRule || state.folderRule != form.folderRule ||
+                state.skipData != form.skipData
     }
 
     override fun apply() {
-        val state = AndProguardConfigState.getInstance()
+        val state = AndConfigState.getInstance()
         state.classRule = form.classRule
         state.methodRule = form.methodRule
         state.fieldRule = form.fieldRule
-        state.idResRule = form.idResRule
-        state.layoutResRule = form.layoutResRule
+        state.resourceRule = form.resourceRule
+        state.fileResRule = form.fileResRule
+        state.folderRule = form.folderRule
         state.skipData = form.skipData
     }
 
     override fun reset() {
-        val state = AndProguardConfigState.getInstance()
+        val state = AndConfigState.getInstance()
         form.classRule = state.classRule
         form.methodRule = state.methodRule
         form.fieldRule = state.fieldRule
-        form.idResRule = state.idResRule
-        form.layoutResRule = state.layoutResRule
+        form.resourceRule = state.resourceRule
+        form.fileResRule = state.fileResRule
+        form.folderRule = state.folderRule
         form.skipData = state.skipData
     }
 

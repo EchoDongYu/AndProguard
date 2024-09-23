@@ -22,17 +22,18 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
-import com.murphy.config.AndProguardConfigState
+import com.murphy.config.AndConfigState
 import com.murphy.core.childrenDfsSequence
 import com.murphy.core.computeTime
 import com.murphy.core.rename
+import com.murphy.core.renameX
 import com.murphy.util.PLUGIN_NAME
 import com.murphy.util.notifyError
 import com.murphy.util.notifyInfo
 import org.jetbrains.android.facet.AndroidFacet
 import java.util.*
 
-class AndBindingAction : AnAction() {
+class ViewBindingAction : AnAction() {
 
     override fun actionPerformed(action: AnActionEvent) {
         val psi = action.getData(PlatformDataKeys.PSI_ELEMENT) ?: return
@@ -40,7 +41,7 @@ class AndBindingAction : AnAction() {
         val project = action.project ?: return
         val dateStart = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
         println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> $dateStart [Refactor Start] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
-        val config = AndProguardConfigState.getInstance()
+        val config = AndConfigState.getInstance()
         config.initRandomNode()
         val startTime = System.currentTimeMillis()
         var count = 0
@@ -54,12 +55,12 @@ class AndBindingAction : AnAction() {
                 val size = sequenceId.size + sequenceLayout.size
                 val total: Double = size.toDouble()
                 sequenceId.forEach {
-                    renameResId(project, it.first, it.second, config.randomIdResName)
+                    renameResId(project, it.first, it.second, config.randomResourceName)
                     indicator.fraction = ++count / total
                     indicator.text = "$count element of $size element"
                 }
                 sequenceLayout.forEach {
-                    renameLayout(project, it.first, it.second, config.randomLayoutResName)
+                    renameLayout(project, it.first, it.second, config.randomFileResName)
                     indicator.fraction = ++count / total
                     indicator.text = "$count element of $size element"
                 }
@@ -144,7 +145,7 @@ class AndBindingAction : AnAction() {
 
     private fun renameResId(project: Project, element: XmlAttributeValue, list: List<PsiReference>, newName: String) {
         ApplicationManager.getApplication().invokeAndWait {
-            element.rename(newName, "XmlId")
+            element.renameX(newName, "XmlId")
         }
         if (list.isNotEmpty()) {
             val newRefName = DataBindingUtil.convertAndroidIdToJavaFieldName(newName)

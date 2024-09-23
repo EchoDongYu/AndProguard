@@ -38,23 +38,30 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup id="AndProguard Notification" displayType="STICKY_BALLOON"/>
-        <applicationService serviceImplementation="com.murphy.config.AndProguardConfigState"/>
+        <applicationService serviceImplementation="com.murphy.config.AndConfigState"/>
         <applicationConfigurable
                 parentId="tools"
                 id="and-proguard-config"
-                instance="com.murphy.config.AndProguardConfigurable"
+                instance="com.murphy.config.AndConfigurable"
                 displayName="AndProguard Config"/>
     </extensions>
     <actions>
-        <action id="and-proguard" text="AndProguard" icon="/icons/infinity.svg"
-                class="com.murphy.action.AndProguardAction"
-                description="Obfuscate android resources">
+        <action id="and-binding" text="ViewBinding" icon="/icons/binding.svg"
+                class="com.murphy.action.ViewBindingAction"
+                description="Obfuscate viewBinding resources">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="first"/>
         </action>
-        <action id="and-binding" text="ViewBinding" icon="/icons/binding.svg"
-                class="com.murphy.action.AndBindingAction"
-                description="Obfuscate viewBinding resources">
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="and-proguard"/>
+        <action id="and-proguard-single" text="Proguard One" icon="/icons/infinity.svg"
+                class="com.murphy.action.ProguardOneAction"
+                description="Obfuscate android resources">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="first"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </action>
+        <action id="and-proguard-batch" text="Proguard Batch" icon="/icons/infinity.svg"
+                class="com.murphy.action.ProguardBatchAction"
+                description="Obfuscate android resources">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="first"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </action>
     </actions>
 </idea-plugin>
