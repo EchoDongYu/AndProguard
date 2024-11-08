@@ -1,6 +1,7 @@
 package com.murphy.core
 
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiNamedElement
 import com.murphy.config.AndConfigState
 
@@ -11,12 +12,13 @@ abstract class AbstractGenerator {
     var count: Int = 0
     var total: Int = 0
 
-    abstract fun process(list: List<PsiNamedElement>, indicator: ProgressIndicator)
+    abstract fun process(project: Project, list: List<PsiNamedElement>, indicator: ProgressIndicator)
 
-    fun ProgressIndicator.increase(label: String) {
-        fraction = ++count / total.toDouble()
-        text = "$name $count of $total [$label]"
-    }
+    protected val ProgressIndicator.increase: (String) -> Unit
+        get() = {
+            fraction = ++count / total.toDouble()
+            text = "$name $count of $total [$it]"
+        }
 
     fun <T> List<T>.alsoReset() = also {
         it.count().takeIf { it > 0 }?.let {

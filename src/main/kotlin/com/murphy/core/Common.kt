@@ -1,12 +1,15 @@
 package com.murphy.core
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Computable
 import com.intellij.psi.*
 import com.intellij.psi.impl.getFieldOfGetter
 import com.intellij.psi.impl.getFieldOfSetter
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.refactoring.RefactoringFactory
+import kotlinx.coroutines.Runnable
 import java.util.concurrent.TimeUnit
 
 fun PsiElement.childrenDfsSequence(): Sequence<PsiElement> =
@@ -18,35 +21,64 @@ fun PsiElement.childrenDfsSequence(): Sequence<PsiElement> =
         visit(this@childrenDfsSequence)
     }
 
-fun PsiNamedElement.rename(newName: String, desc: String) {
-    val pair = runReadAction { Pair(!isValid, name) }
+inline fun <reified T> DumbService.dumbReadAction(r: Computable<T>): T {
+    return runReadActionInSmartMode<T> { r.compute() }
+}
+
+inline fun <reified T> PsiElement.dumbReadAction(r: Computable<T>): T {
+    return DumbService.getInstance(project).dumbReadAction(r)
+}
+
+inline fun <reified T> Project.dumbReadAction(r: Computable<T>): T {
+    return DumbService.getInstance(this).dumbReadAction(r)
+}
+
+fun PsiNamedElement.rename(newName: String, desc: String, onFinished: ((String) -> Unit)? = null) {
+    val dumbService = DumbService.getInstance(project)
+    val pair = dumbService.dumbReadAction { Pair(!isValid, name) }
     if (pair.first) return
     println(String.format("[$desc] %s >>> %s", pair.second, newName))
-    ApplicationManager.getApplication().invokeAndWait {
+    val runnable = Runnable {
         RefactoringFactory.getInstance(project)
             .createRename(this, newName, false, false)
             .run()
     }
+    ApplicationManager.getApplication().invokeAndWait {
+        if (dumbService.isDumb) {
+            dumbService.runWhenSmart { dumbService.smartInvokeLater(runnable) }
+        } else {
+            runnable.run()
+        }
+    }
+    onFinished?.invoke(desc)
 }
 
-fun XmlAttributeValue.renameX(newName: String, desc: String) {
-    val pair = runReadAction { Pair(!isValid, value) }
+fun XmlAttributeValue.renameX(newName: String, desc: String, onFinished: ((String) -> Unit)? = null) {
+    val dumbService = DumbService.getInstance(project)
+    val pair = dumbService.dumbReadAction { Pair(!isValid, value) }
     if (pair.first) return
     println(String.format("[$desc] %s >>> %s", pair.second, newName))
-    ApplicationManager.getApplication().invokeAndWait {
+    val runnable = Runnable {
         RefactoringFactory.getInstance(project)
             .createRename(this, newName, false, false)
             .run()
     }
+    ApplicationManager.getApplication().invokeAndWait {
+        if (dumbService.isDumb) {
+            dumbService.runWhenSmart { dumbService.smartInvokeLater(runnable) }
+        } else {
+            runnable.run()
+        }
+    }
+    onFinished?.invoke(desc)
 }
 
-val PsiMethod.isSetter
-    get() = runReadAction { name.startsWith("set") }
+val PsiMethod.isSetter: Boolean
+    get() = dumbReadAction { name.startsWith("set") }
 val PsiMethod.isGetterOrSetter
-    get() = runReadAction { name.run { startsWith("set") || startsWith("get") || startsWith("is") } }
+    get() = dumbReadAction { name.run { startsWith("set") || startsWith("get") || startsWith("is") } }
 val PsiMethod.fieldOfGetterOrSetter
-    get() = if (isSetter) runReadAction { getFieldOfSetter(this) }
-    else runReadAction { getFieldOfGetter(this) }
+    get() = dumbReadAction { if (isSetter) getFieldOfSetter(this) else getFieldOfGetter(this) }
 
 fun computeTime(startTime: Long): String {
     val time = System.currentTimeMillis() - startTime

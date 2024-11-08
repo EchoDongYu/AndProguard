@@ -4,7 +4,6 @@ import com.ibm.icu.text.SimpleDateFormat
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -31,9 +30,12 @@ class ProguardBatchAction : AnAction() {
         ProgressManager.getInstance().run(object : Task.Modal(action.project, PLUGIN_NAME, false) {
             override fun run(indicator: ProgressIndicator) {
                 indicator.isIndeterminate = false
-                indicator.fraction = 0.0
-                runReadAction { psi.childrenDfsSequence().filterIsInstance<PsiNamedElement>().toList() }.run {
-                    generators.forEach { it.process(this, indicator) }
+                indicator.fraction = 0.001
+
+                project.dumbReadAction {
+                    psi.childrenDfsSequence().filterIsInstance<PsiNamedElement>().toList()
+                }.run {
+                    generators.forEach { it.process(project, this, indicator) }
                 }
             }
 

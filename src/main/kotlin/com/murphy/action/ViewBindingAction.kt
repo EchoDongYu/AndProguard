@@ -9,11 +9,11 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
@@ -25,6 +25,7 @@ import com.intellij.psi.xml.XmlFile
 import com.murphy.config.AndConfigState
 import com.murphy.core.childrenDfsSequence
 import com.murphy.core.computeTime
+import com.murphy.core.dumbReadAction
 import com.murphy.core.rename
 import com.murphy.core.renameX
 import com.murphy.util.PLUGIN_NAME
@@ -48,10 +49,11 @@ class ViewBindingAction : AnAction() {
         ProgressManager.getInstance().run(object : Task.Modal(project, PLUGIN_NAME, false) {
             override fun run(indicator: ProgressIndicator) {
                 indicator.isIndeterminate = false
-                indicator.fraction = 0.0
+                indicator.fraction = 0.001
                 indicator.text = "Waiting search binding element..."
-                val sequenceId = runReadAction { psi.seqResId }
-                val sequenceLayout = runReadAction { psi.seqLayout }
+                val dService = DumbService.getInstance(project)
+                val sequenceId = dService.dumbReadAction { psi.seqResId }
+                val sequenceLayout = dService.dumbReadAction { psi.seqLayout }
                 val size = sequenceId.size + sequenceLayout.size
                 val total: Double = size.toDouble()
                 sequenceId.forEach {
