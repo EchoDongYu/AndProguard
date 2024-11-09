@@ -18,12 +18,6 @@ object KotlinGenerator : AbstractGenerator() {
         indicator.fraction = 0.001
         indicator.text = "Refactor $name..."
         val dService = DumbService.getInstance(project)
-        if (config.methodRule.isNotEmpty()) {
-            list.filterIsInstance<KtNamedFunction>().alsoReset().forEach {
-                if (dService.dumbReadAction { !it.hasModifier(KtTokens.OVERRIDE_KEYWORD) && !it.isMainFunction() && !it.isAnonymousFunction })
-                    it.rename(config.randomMethodName, "Function", indicator.increase)
-            }
-        }
         if (config.classRule.isNotEmpty()) {
             list.filterIsInstance<KtObjectDeclaration>().alsoReset().forEach {
                 if (dService.dumbReadAction { !it.isObjectLiteral() && !it.isCompanion() })
@@ -35,6 +29,12 @@ object KotlinGenerator : AbstractGenerator() {
             list.filterIsInstance<KtFile>().alsoReset().forEach {
                 if (dService.dumbReadAction { it.classes.size != 1 || it.hasTopLevelCallables() })
                     it.rename(config.randomClassName + KOTLIN_SUFFIX, "File", indicator.increase)
+            }
+        }
+        if (config.functionRule.isNotEmpty()) {
+            list.filterIsInstance<KtNamedFunction>().alsoReset().forEach {
+                if (dService.dumbReadAction { !it.hasModifier(KtTokens.OVERRIDE_KEYWORD) && !it.isMainFunction() && !it.isAnonymousFunction })
+                    it.rename(config.randomFunctionName, "Function", indicator.increase)
             }
         }
     }

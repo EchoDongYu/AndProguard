@@ -6,20 +6,23 @@ public class AndProguardForm {
     private JPanel rootPane;
     private JCheckBox skipData;
     private JTextField classRule;
-    private JTextField methodRule;
-    private JTextField fieldRule;
+    private JTextField functionRule;
+    private JTextField propertyRule;
     private JTextField resourceRule;
-    private JTextField fileResRule;
-    private JTextField folderRule;
+    private JTextField resFileRule;
+    private JTextField directoryRule;
+    private JRadioButton alsoDir;
+    private JRadioButton onlyDir;
+    private JRadioButton notDir;
 
-    public AndProguardForm(boolean skipData, String classRule, String methodRule, String fieldRule, String resourceRule, String fileResRule, String folderRule) {
+    public AndProguardForm(boolean skipData, String classRule, String functionRule, String propertyRule, String resourceRule, String resFileRule, String directoryRule) {
         this.skipData.setSelected(skipData);
         this.classRule.setText(classRule);
-        this.methodRule.setText(methodRule);
-        this.fieldRule.setText(fieldRule);
+        this.functionRule.setText(functionRule);
+        this.propertyRule.setText(propertyRule);
         this.resourceRule.setText(resourceRule);
-        this.fileResRule.setText(fileResRule);
-        this.folderRule.setText(folderRule);
+        this.resFileRule.setText(resFileRule);
+        this.directoryRule.setText(directoryRule);
     }
 
     public JPanel getPanel() {
@@ -34,20 +37,20 @@ public class AndProguardForm {
         this.classRule.setText(classRule);
     }
 
-    public String getMethodRule() {
-        return methodRule.getText();
+    public String getFunctionRule() {
+        return functionRule.getText();
     }
 
-    public void setMethodRule(String methodRule) {
-        this.methodRule.setText(methodRule);
+    public void setFunctionRule(String functionRule) {
+        this.functionRule.setText(functionRule);
     }
 
-    public String getFieldRule() {
-        return fieldRule.getText();
+    public String getPropertyRule() {
+        return propertyRule.getText();
     }
 
-    public void setFieldRule(String fieldRule) {
-        this.fieldRule.setText(fieldRule);
+    public void setPropertyRule(String propertyRule) {
+        this.propertyRule.setText(propertyRule);
     }
 
     public String getResourceRule() {
@@ -58,20 +61,20 @@ public class AndProguardForm {
         this.resourceRule.setText(resourceRule);
     }
 
-    public String getFileResRule() {
-        return fileResRule.getText();
+    public String getResFileRule() {
+        return resFileRule.getText();
     }
 
-    public void setFileResRule(String fileResRule) {
-        this.fileResRule.setText(fileResRule);
+    public void setResFileRule(String resFileRule) {
+        this.resFileRule.setText(resFileRule);
     }
 
-    public String getFolderRule() {
-        return folderRule.getText();
+    public String getDirectoryRule() {
+        return directoryRule.getText();
     }
 
-    public void setFolderRule(String folderRule) {
-        this.folderRule.setText(folderRule);
+    public void setDirectoryRule(String directoryRule) {
+        this.directoryRule.setText(directoryRule);
     }
 
     public boolean getSkipData() {
@@ -80,5 +83,18 @@ public class AndProguardForm {
 
     public void setSkipData(boolean skipData) {
         this.skipData.setSelected(skipData);
+    }
+
+    public int getDirectoryMode() {
+        if (this.notDir.isSelected()) return 1;
+        else if (this.onlyDir.isSelected()) return 2;
+        else if (this.alsoDir.isSelected()) return 3;
+        else return 1;
+    }
+
+    public void setDirectoryMode(int value) {
+        notDir.setSelected(value != 2 && value != 3);
+        onlyDir.setSelected(value == 2);
+        alsoDir.setSelected(value == 3);
     }
 }

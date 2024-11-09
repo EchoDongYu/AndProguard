@@ -10,11 +10,11 @@ class AndConfigurable : Configurable {
         AndProguardForm(
             state.skipData,
             state.classRule,
-            state.methodRule,
-            state.fieldRule,
+            state.functionRule,
+            state.propertyRule,
             state.resourceRule,
-            state.fileResRule,
-            state.folderRule
+            state.resFileRule,
+            state.directoryRule
         )
     }
 
@@ -24,31 +24,31 @@ class AndConfigurable : Configurable {
 
     override fun isModified(): Boolean {
         val state = AndConfigState.getInstance()
-        return state.classRule != form.classRule || state.methodRule != form.methodRule ||
-                state.fieldRule != form.fieldRule || state.resourceRule != form.resourceRule ||
-                state.fileResRule != form.fileResRule || state.folderRule != form.folderRule ||
+        return state.classRule != form.classRule || state.functionRule != form.functionRule ||
+                state.propertyRule != form.propertyRule || state.resourceRule != form.resourceRule ||
+                state.resFileRule != form.resFileRule || state.directoryRule != form.directoryRule ||
                 state.skipData != form.skipData
     }
 
     override fun apply() {
         val state = AndConfigState.getInstance()
         state.classRule = form.classRule
-        state.methodRule = form.methodRule
-        state.fieldRule = form.fieldRule
+        state.functionRule = form.functionRule
+        state.propertyRule = form.propertyRule
         state.resourceRule = form.resourceRule
-        state.fileResRule = form.fileResRule
-        state.folderRule = form.folderRule
+        state.resFileRule = form.resFileRule
+        state.directoryRule = form.directoryRule
         state.skipData = form.skipData
     }
 
     override fun reset() {
         val state = AndConfigState.getInstance()
         form.classRule = state.classRule
-        form.methodRule = state.methodRule
-        form.fieldRule = state.fieldRule
+        form.functionRule = state.functionRule
+        form.propertyRule = state.propertyRule
         form.resourceRule = state.resourceRule
-        form.fileResRule = state.fileResRule
-        form.folderRule = state.folderRule
+        form.resFileRule = state.resFileRule
+        form.directoryRule = state.directoryRule
         form.skipData = state.skipData
     }
 

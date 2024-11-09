@@ -25,7 +25,7 @@ class ProguardBatchAction : AnAction() {
         val startTime = System.currentTimeMillis()
         val generators = arrayOf(
             KotlinPreGenerator, JavaPreGenerator, KotlinGenerator, JavaGenerator,
-            XmlGenerator, BinaryFileGenerator, FolderGenerator
+            XmlGenerator, BinaryFileGenerator, DirectoryGenerator
         )
         ProgressManager.getInstance().run(object : Task.Modal(action.project, PLUGIN_NAME, false) {
             override fun run(indicator: ProgressIndicator) {
