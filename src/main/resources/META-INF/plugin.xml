@@ -46,11 +46,6 @@
                 displayName="AndProguard Config"/>
     </extensions>
     <actions>
-        <action id="and-binding" text="ViewBinding" icon="/icons/binding.svg"
-                class="com.murphy.action.ViewBindingAction"
-                description="Obfuscate viewBinding resources">
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="first"/>
-        </action>
         <action id="and-proguard-single" text="Proguard One" icon="/icons/infinity.svg"
                 class="com.murphy.action.ProguardOneAction"
                 description="Obfuscate android resources">

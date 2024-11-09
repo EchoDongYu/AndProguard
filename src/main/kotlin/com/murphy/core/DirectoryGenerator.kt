@@ -6,15 +6,12 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiNamedElement
 
 object DirectoryGenerator : AbstractGenerator() {
-    override val name: String get() = "Folder"
+    override val name: String get() = "Directory"
 
-    override fun process(project: Project, list: List<PsiNamedElement>, indicator: ProgressIndicator) {
-        indicator.fraction = 0.001
-        indicator.text = "Refactor $name..."
+    override fun process(first: Project, second: ProgressIndicator, data: List<PsiNamedElement>) {
+        super.process(first, second, data)
         if (config.directoryRule.isNotEmpty()) {
-            list.filterIsInstance<PsiDirectory>().alsoReset().forEach {
-                it.rename(config.randomDirectoryName, "Folder", indicator.increase)
-            }
+            data.psiFilter<PsiDirectory>().renameEach(RefactorType.PsiDirectory)
         }
     }
 }

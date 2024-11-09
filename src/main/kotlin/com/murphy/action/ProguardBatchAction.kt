@@ -24,18 +24,19 @@ class ProguardBatchAction : AnAction() {
         AndConfigState.getInstance().initRandomNode()
         val startTime = System.currentTimeMillis()
         val generators = arrayOf(
-            KotlinPreGenerator, JavaPreGenerator, KotlinGenerator, JavaGenerator,
-            XmlGenerator, BinaryFileGenerator, DirectoryGenerator
+            KotlinPreGenerator, JavaPreGenerator,
+            KotlinGenerator, JavaGenerator,
+            ResourceGenerator, BinaryFileGenerator, DirectoryGenerator
         )
         ProgressManager.getInstance().run(object : Task.Modal(action.project, PLUGIN_NAME, false) {
             override fun run(indicator: ProgressIndicator) {
                 indicator.isIndeterminate = false
-                indicator.fraction = 0.001
+                indicator.fraction = 0.0
 
                 project.dumbReadAction {
                     psi.childrenDfsSequence().filterIsInstance<PsiNamedElement>().toList()
                 }.run {
-                    generators.forEach { it.process(project, this, indicator) }
+                    generators.forEach { it.process(project, indicator, this) }
                 }
             }
 

@@ -3,31 +3,28 @@ package com.murphy.core
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiNamedElement
-import com.intellij.psi.impl.source.*
-import org.jetbrains.kotlin.j2k.isMainMethod
-import kotlin.collections.filterIsInstance
+import com.intellij.psi.impl.source.PsiAnonymousClassImpl
+import com.intellij.psi.impl.source.PsiClassImpl
+import com.intellij.psi.impl.source.PsiEnumConstantImpl
+import com.intellij.psi.impl.source.PsiMethodImpl
+import com.intellij.psi.util.PsiMethodUtil.isMainMethod
 
 object JavaGenerator : AbstractGenerator() {
     override val name: String get() = "Java"
 
-    override fun process(project: Project, list: List<PsiNamedElement>, indicator: ProgressIndicator) {
-        indicator.fraction = 0.001
-        indicator.text = "Refactor $name..."
+    override fun process(first: Project, second: ProgressIndicator, data: List<PsiNamedElement>) {
+        super.process(first, second, data)
         if (config.functionRule.isNotEmpty()) {
-            list.filterIsInstance<PsiMethodImpl>().alsoReset().forEach {
-                val skip = skipData && it.isGetterOrSetter
-                val canRefactor = project.dumbReadAction {
-                    it.findSuperMethods().isEmpty() && !it.isConstructor && !it.isMainMethod()
-                }
-                if (!skip && canRefactor)
-                    it.rename(config.randomFunctionName, "Method", indicator.increase)
-            }
+            data.psiFilter<PsiMethodImpl> {
+                val skip = config.skipData && it.isGetterOrSetter
+                val allow = it.findSuperMethods().isEmpty() && !it.isConstructor && !isMainMethod(it)
+                !skip && allow
+            }.renameEach(RefactorType.PsiMethod)
         }
         if (config.classRule.isNotEmpty()) {
-            list.filterIsInstance<PsiClassImpl>().alsoReset().forEach {
-                if (it !is PsiAnonymousClassImpl)
-                    it.rename(config.randomClassName, "Class", indicator.increase)
-            }
+            data.psiFilter<PsiEnumConstantImpl>().renameEach(RefactorType.PsiEnumConstant)
+            data.psiFilter<PsiClassImpl> { it !is PsiAnonymousClassImpl }
+                .renameEach(RefactorType.PsiClass)
         }
     }
 }

@@ -8,31 +8,25 @@ import com.intellij.psi.impl.source.PsiFieldImpl
 import com.intellij.psi.impl.source.PsiMethodImpl
 import com.intellij.psi.impl.source.PsiParameterImpl
 import com.intellij.psi.impl.source.tree.java.PsiLocalVariableImpl
-import kotlin.collections.filterIsInstance
 
 object JavaPreGenerator : AbstractGenerator() {
     override val name: String get() = "JavaPre"
 
-    override fun process(project: Project, list: List<PsiNamedElement>, indicator: ProgressIndicator) {
-        indicator.fraction = 0.001
-        indicator.text = "Refactor $name..."
+    override fun process(first: Project, second: ProgressIndicator, data: List<PsiNamedElement>) {
+        super.process(first, second, data)
         val skipElements: MutableSet<PsiField> = HashSet()
-        if (skipData) {
-            list.filterIsInstance<PsiMethodImpl>().filter { it.isGetterOrSetter }.alsoReset().forEach {
-                it.fieldOfGetterOrSetter?.run { skipElements.add(this) }
-            }
+        if (config.skipData) {
+            data.psiFilter<PsiMethodImpl> { it.isGetterOrSetter }
+                .alsoReset("FindBean")
+                .forEach {
+                    service.dumbReadAction { it.fieldOfGetterOrSetter }?.run { skipElements.add(this) }
+                    increase()
+                }
         }
         if (config.propertyRule.isNotEmpty()) {
-            list.filterIsInstance<PsiParameterImpl>().alsoReset().forEach {
-                it.rename(config.randomPropertyName, "Parameter", indicator.increase)
-            }
-            list.filterIsInstance<PsiFieldImpl>().alsoReset().forEach {
-                if (!skipElements.contains(it))
-                    it.rename(config.randomPropertyName, "Field", indicator.increase)
-            }
-            list.filterIsInstance<PsiLocalVariableImpl>().alsoReset().forEach {
-                it.rename(config.randomPropertyName, "Variable", indicator.increase)
-            }
+            data.psiFilter<PsiParameterImpl>().renameEach(RefactorType.PsiParameter)
+            data.psiFilter<PsiFieldImpl> { !skipElements.contains(it) }.renameEach(RefactorType.PsiField)
+            data.psiFilter<PsiLocalVariableImpl>().renameEach(RefactorType.PsiVariable)
         }
         skipElements.clear()
     }
