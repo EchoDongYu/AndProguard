@@ -13,14 +13,14 @@ object JavaGenerator : AbstractGenerator() {
     override fun process(project: Project, list: List<PsiNamedElement>, indicator: ProgressIndicator) {
         indicator.fraction = 0.001
         indicator.text = "Refactor $name..."
-        if (config.methodRule.isNotEmpty()) {
+        if (config.functionRule.isNotEmpty()) {
             list.filterIsInstance<PsiMethodImpl>().alsoReset().forEach {
                 val skip = skipData && it.isGetterOrSetter
                 val canRefactor = project.dumbReadAction {
                     it.findSuperMethods().isEmpty() && !it.isConstructor && !it.isMainMethod()
                 }
                 if (!skip && canRefactor)
-                    it.rename(config.randomMethodName, "Method", indicator.increase)
+                    it.rename(config.randomFunctionName, "Method", indicator.increase)
             }
         }
         if (config.classRule.isNotEmpty()) {

@@ -12,9 +12,9 @@ object BinaryFileGenerator : AbstractGenerator() {
     override fun process(project: Project, list: List<PsiNamedElement>, indicator: ProgressIndicator) {
         indicator.fraction = 0.001
         indicator.text = "Refactor $name..."
-        if (config.fileResRule.isNotEmpty()) {
+        if (config.resFileRule.isNotEmpty()) {
             list.filterIsInstance<PsiBinaryFile>().alsoReset().forEach {
-                it.rename(config.randomFileResName, "BinaryFile", indicator.increase)
+                it.rename(config.randomResFileName, "BinaryFile", indicator.increase)
             }
         }
     }

@@ -36,21 +36,21 @@ class ProguardOneAction : AnAction() {
         config.initRandomNode()
         if (psi is PsiNamedElement) {
             when (psi) {
-                is PsiDirectory -> if (config.folderRule.isNotEmpty()) {
-                    psi.rename(config.randomFolderName, "Folder")
+                is PsiDirectory -> if (config.directoryRule.isNotEmpty()) {
+                    psi.rename(config.randomDirectoryName, "Folder")
                 }
 
-                is XmlFile, is PsiBinaryFile -> if (config.fileResRule.isNotEmpty()) {
-                    psi.rename(config.randomFileResName, "FileRes")
+                is XmlFile, is PsiBinaryFile -> if (config.resFileRule.isNotEmpty()) {
+                    psi.rename(config.randomResFileName, "FileRes")
                 }
 
                 is PsiParameterImpl, is PsiFieldImpl, is PsiLocalVariableImpl,
-                is KtProperty, is KtParameter -> if (config.fieldRule.isNotEmpty()) {
-                    psi.rename(config.randomFieldName, "Field")
+                is KtProperty, is KtParameter -> if (config.propertyRule.isNotEmpty()) {
+                    psi.rename(config.randomPropertyName, "Field")
                 }
 
-                is KtNamedFunction, is PsiMethodImpl -> if (config.methodRule.isNotEmpty()) {
-                    psi.rename(config.randomMethodName, "Method")
+                is KtNamedFunction, is PsiMethodImpl -> if (config.functionRule.isNotEmpty()) {
+                    psi.rename(config.randomFunctionName, "Method")
                 }
 
                 is KtObjectDeclaration, is KtClass, is KtFile,

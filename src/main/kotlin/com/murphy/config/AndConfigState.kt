@@ -14,11 +14,11 @@ import com.murphy.util.RandomNode.Companion.parseNode
 )
 class AndConfigState : PersistentStateComponent<AndConfigState> {
     var classRule: String = "{[1000](1)[0100](6,12)}(2,3)"
-    var methodRule: String = "[0100](7,13){[1000](1)[0100](6,12)}(0,2)"
-    var fieldRule: String = "[0100](7,13){[1000](1)[0100](6,12)}(0,1)"
+    var functionRule: String = "[0100](7,13){[1000](1)[0100](6,12)}(0,2)"
+    var propertyRule: String = "[0100](7,13){[1000](1)[0100](6,12)}(0,1)"
     var resourceRule: String = "[0100](7,11){<_>[0100](7,11)}(0,1)"
-    var fileResRule: String = "[0100](7,11){<_>[0100](7,11)}(1,2)"
-    var folderRule: String = ""
+    var resFileRule: String = "[0100](7,11){<_>[0100](7,11)}(1,2)"
+    var directoryRule: String = ""
 
     /**
      * @Scope：Java/Kotlin
@@ -30,11 +30,11 @@ class AndConfigState : PersistentStateComponent<AndConfigState> {
     private lateinit var randomNodeList: List<RandomNode>
 
     val randomClassName get() = randomNodeList[0].randomString
-    val randomMethodName get() = randomNodeList[1].randomString
-    val randomFieldName get() = randomNodeList[2].randomString
+    val randomFunctionName get() = randomNodeList[1].randomString
+    val randomPropertyName get() = randomNodeList[2].randomString
     val randomResourceName get() = randomNodeList[3].randomString
-    val randomFileResName get() = randomNodeList[4].randomString
-    val randomFolderName get() = randomNodeList[5].randomString
+    val randomResFileName get() = randomNodeList[4].randomString
+    val randomDirectoryName get() = randomNodeList[5].randomString
 
     override fun getState(): AndConfigState = this
 
@@ -45,11 +45,11 @@ class AndConfigState : PersistentStateComponent<AndConfigState> {
     fun initRandomNode() {
         randomNodeList = listOf(
             classRule.parseNode(),
-            methodRule.parseNode(),
-            fieldRule.parseNode(),
+            functionRule.parseNode(),
+            propertyRule.parseNode(),
             resourceRule.parseNode(),
-            fileResRule.parseNode(),
-            folderRule.parseNode()
+            resFileRule.parseNode(),
+            directoryRule.parseNode()
         )
     }
 

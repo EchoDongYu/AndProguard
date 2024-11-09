@@ -22,16 +22,16 @@ object JavaPreGenerator : AbstractGenerator() {
                 it.fieldOfGetterOrSetter?.run { skipElements.add(this) }
             }
         }
-        if (config.fieldRule.isNotEmpty()) {
+        if (config.propertyRule.isNotEmpty()) {
             list.filterIsInstance<PsiParameterImpl>().alsoReset().forEach {
-                it.rename(config.randomFieldName, "Parameter", indicator.increase)
+                it.rename(config.randomPropertyName, "Parameter", indicator.increase)
             }
             list.filterIsInstance<PsiFieldImpl>().alsoReset().forEach {
                 if (!skipElements.contains(it))
-                    it.rename(config.randomFieldName, "Field", indicator.increase)
+                    it.rename(config.randomPropertyName, "Field", indicator.increase)
             }
             list.filterIsInstance<PsiLocalVariableImpl>().alsoReset().forEach {
-                it.rename(config.randomFieldName, "Variable", indicator.increase)
+                it.rename(config.randomPropertyName, "Variable", indicator.increase)
             }
         }
         skipElements.clear()

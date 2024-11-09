@@ -23,14 +23,14 @@ object KotlinPreGenerator : AbstractGenerator() {
                 skipElements.addAll(it.primaryConstructorParameters)
             }
         }
-        if (config.fieldRule.isNotEmpty()) {
+        if (config.propertyRule.isNotEmpty()) {
             list.filterIsInstance<KtProperty>().alsoReset().forEach {
                 if (dService.dumbReadAction { !it.hasModifier(KtTokens.OVERRIDE_KEYWORD) })
-                    it.rename(config.randomFieldName, "Property", indicator.increase)
+                    it.rename(config.randomPropertyName, "Property", indicator.increase)
             }
             list.filterIsInstance<KtParameter>().alsoReset().forEach {
                 if (dService.dumbReadAction { !it.hasModifier(KtTokens.OVERRIDE_KEYWORD) && !skipElements.contains(it) })
-                    it.rename(config.randomFieldName, "Parameter", indicator.increase)
+                    it.rename(config.randomPropertyName, "Parameter", indicator.increase)
             }
         }
         skipElements.clear()

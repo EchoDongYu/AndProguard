@@ -62,7 +62,7 @@ class ViewBindingAction : AnAction() {
                     indicator.text = "$count element of $size element"
                 }
                 sequenceLayout.forEach {
-                    renameLayout(project, it.first, it.second, config.randomFileResName)
+                    renameLayout(project, it.first, it.second, config.randomResFileName)
                     indicator.fraction = ++count / total
                     indicator.text = "$count element of $size element"
                 }

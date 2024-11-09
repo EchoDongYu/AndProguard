@@ -50,9 +50,9 @@ object XmlGenerator : AbstractGenerator() {
             }
             resIdList.clear()
         }
-        if (config.fileResRule.isNotEmpty()) {
+        if (config.resFileRule.isNotEmpty()) {
             list.filterIsInstance<XmlFile>().filter { it.checkRename() }.alsoReset().forEach {
-                it.rename(config.randomFileResName, "File", indicator.increase)
+                it.rename(config.randomResFileName, "File", indicator.increase)
             }
         }
     }
