@@ -4,18 +4,18 @@ import com.murphy.config.AndConfigState
 import com.murphy.util.KOTLIN_SUFFIX
 
 enum class RefactorType {
-    PsiDirectory, PsiBinaryFile,
+    PsiDirectory, PsiResourceFile,
     PsiClass, PsiMethod, PsiParameter, PsiField, PsiVariable, PsiEnumConstant,
-    KtFile, KtObject, KtClass, KtFunction, KtProperty, KtParameter;
+    KtFile, KtObject, KtClass, KtFunction, KtVariable, KtParameter;
 
     fun randomName(config: AndConfigState) = when (this) {
         PsiClass, PsiEnumConstant, KtObject, KtClass -> config.randomClassName
         PsiMethod, KtFunction -> config.randomFunctionName
         PsiParameter, PsiVariable, PsiField,
-        KtParameter, KtProperty -> config.randomPropertyName
+        KtParameter, KtVariable -> config.randomPropertyName
 
         KtFile -> config.randomClassName + KOTLIN_SUFFIX
-        PsiBinaryFile -> config.randomResFileName
+        PsiResourceFile -> config.randomResFileName
         PsiDirectory -> config.randomDirectoryName
     }
 }

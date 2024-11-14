@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 
-object KotlinGenerator : AbstractGenerator() {
+object KotlinGenerator : BatchGenerator() {
     override val name: String get() = "Kotlin"
 
     override fun process(first: Project, second: ProgressIndicator, data: List<PsiNamedElement>) {

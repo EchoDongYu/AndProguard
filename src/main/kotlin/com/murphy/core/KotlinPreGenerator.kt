@@ -6,9 +6,9 @@ import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtVariableDeclaration
 
-object KotlinPreGenerator : AbstractGenerator() {
+object KotlinPreGenerator : BatchGenerator() {
     override val name: String get() = "KotlinPre"
 
     override fun process(first: Project, second: ProgressIndicator, data: List<PsiNamedElement>) {
@@ -23,8 +23,8 @@ object KotlinPreGenerator : AbstractGenerator() {
                 }
         }
         if (config.propertyRule.isNotEmpty()) {
-            data.psiFilter<KtProperty> { !it.hasModifier(KtTokens.OVERRIDE_KEYWORD) }
-                .renameEach(RefactorType.KtProperty)
+            data.psiFilter<KtVariableDeclaration> { !it.hasModifier(KtTokens.OVERRIDE_KEYWORD) }
+                .renameEach(RefactorType.KtVariable)
             data.psiFilter<KtParameter> {
                 !it.hasModifier(KtTokens.OVERRIDE_KEYWORD) && !skipElements.contains(it)
             }.renameEach(RefactorType.KtParameter)

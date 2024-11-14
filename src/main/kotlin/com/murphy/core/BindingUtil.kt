@@ -5,10 +5,14 @@ import com.android.tools.idea.databinding.util.DataBindingUtil
 import com.android.tools.idea.res.psi.ResourceReferencePsiElement
 import com.android.tools.idea.util.androidFacet
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiReference
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.psi.xml.XmlAttributeValue
+import com.intellij.psi.xml.XmlFile
 import com.murphy.util.PLUGIN_NAME
 
 fun ResourceReferencePsiElement.findIdReference(scope: SearchScope): List<PsiReference>? {
@@ -38,3 +42,43 @@ fun List<PsiReference>.handleReferenceRename(project: Project, newRefName: Strin
             forEach { it.handleElementRename(newRefName) }
         }
 }
+
+fun ResourceReferencePsiElement.renameId(
+    newName: String,
+    project: Project,
+    service: DumbService,
+    scope: SearchScope
+) {
+    val originalPsi = delegate
+    if (originalPsi !is XmlAttributeValue) return
+    val psiReferences = service.dumbReadAction { findIdReference(scope) }?.takeIf { it.isNotEmpty() }
+    originalPsi.renameX(newName, "IdAttribute", project, service)
+    psiReferences?.run {
+        val newRefName = DataBindingUtil.convertAndroidIdToJavaFieldName(newName)
+        println(String.format("[IdBinding] >>> %s", newRefName))
+        handleReferenceRename(project, newRefName)
+    }
+}
+
+fun ResourceReferencePsiElement.renameId(newName: String, project: Project) =
+    renameId(newName, project, DumbService.getInstance(project), GlobalSearchScope.projectScope(project))
+
+fun ResourceReferencePsiElement.renameLayout(
+    newName: String,
+    project: Project,
+    service: DumbService,
+    scope: SearchScope
+) {
+    val originalPsi = delegate
+    if (originalPsi !is XmlFile) return
+    val psiReferences = service.dumbReadAction { findLayoutReference(scope) }?.takeIf { it.isNotEmpty() }
+    originalPsi.rename(newName, "Layout", project, service)
+    psiReferences?.run {
+        val newRefName = DataBindingUtil.convertFileNameToJavaClassName(newName) + "Binding"
+        println(String.format("[LayoutBinding] >>> %s", newRefName))
+        handleReferenceRename(project, newRefName)
+    }
+}
+
+fun ResourceReferencePsiElement.renameLayout(newName: String, project: Project) =
+    renameLayout(newName, project, DumbService.getInstance(project), GlobalSearchScope.projectScope(project))

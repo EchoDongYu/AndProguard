@@ -9,7 +9,7 @@ import com.intellij.psi.impl.source.PsiEnumConstantImpl
 import com.intellij.psi.impl.source.PsiMethodImpl
 import com.intellij.psi.util.PsiMethodUtil.isMainMethod
 
-object JavaGenerator : AbstractGenerator() {
+object JavaGenerator : BatchGenerator() {
     override val name: String get() = "Java"
 
     override fun process(first: Project, second: ProgressIndicator, data: List<PsiNamedElement>) {

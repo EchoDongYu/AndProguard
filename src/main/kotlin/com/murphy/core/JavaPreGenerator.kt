@@ -9,7 +9,7 @@ import com.intellij.psi.impl.source.PsiMethodImpl
 import com.intellij.psi.impl.source.PsiParameterImpl
 import com.intellij.psi.impl.source.tree.java.PsiLocalVariableImpl
 
-object JavaPreGenerator : AbstractGenerator() {
+object JavaPreGenerator : BatchGenerator() {
     override val name: String get() = "JavaPre"
 
     override fun process(first: Project, second: ProgressIndicator, data: List<PsiNamedElement>) {

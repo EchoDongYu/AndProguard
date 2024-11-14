@@ -25,34 +25,39 @@ inline fun <reified T> DumbService.dumbReadAction(r: Computable<T>): T {
     return runReadActionInSmartMode<T> { r.compute() }
 }
 
-inline fun <reified T> Project.dumbReadAction(r: Computable<T>): T {
-    return DumbService.getInstance(this).dumbReadAction(r)
+fun PsiNamedElement.rename(
+    newName: String,
+    desc: String,
+    myProject: Project,
+    dumbService: DumbService = DumbService.getInstance(myProject)
+) {
+    val pair = dumbService.dumbReadAction { Pair(!isValid, name) }
+    if (pair.first || pair.second == null) return
+    println(String.format("[$desc] %s >>> %s", pair.second, newName))
+    rename(newName, myProject, dumbService)
 }
 
-fun PsiNamedElement.rename(newName: String, desc: String) {
-    val pair = project.dumbReadAction { Pair(!isValid, name) }
+fun XmlAttributeValue.renameX(
+    newName: String,
+    desc: String,
+    myProject: Project,
+    dumbService: DumbService = DumbService.getInstance(myProject)
+) {
+    val pair = dumbService.dumbReadAction { Pair(!isValid, value) }
     if (pair.first) return
     println(String.format("[$desc] %s >>> %s", pair.second, newName))
-    rename(newName)
+    rename(newName, myProject, dumbService)
 }
 
-fun XmlAttributeValue.renameX(newName: String, desc: String) {
-    val pair = project.dumbReadAction { Pair(!isValid, value) }
-    if (pair.first) return
-    println(String.format("[$desc] %s >>> %s", pair.second, newName))
-    rename(newName)
-}
-
-private fun PsiElement.rename(newName: String) {
-    val dumbService = DumbService.getInstance(project)
+private fun PsiElement.rename(newName: String, myProject: Project, service: DumbService) {
     val runnable = Runnable {
-        RefactoringFactory.getInstance(project)
+        RefactoringFactory.getInstance(myProject)
             .createRename(this, newName, false, false)
             .run()
     }
     ApplicationManager.getApplication().invokeAndWait {
-        if (dumbService.isDumb) {
-            dumbService.runWhenSmart { dumbService.smartInvokeLater(runnable) }
+        if (service.isDumb) {
+            service.runWhenSmart { service.smartInvokeLater(runnable) }
         } else {
             runnable.run()
         }

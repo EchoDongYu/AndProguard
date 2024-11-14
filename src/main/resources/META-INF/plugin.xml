@@ -46,17 +46,26 @@
                 displayName="AndProguard Config"/>
     </extensions>
     <actions>
-        <action id="and-proguard-single" text="Proguard One" icon="/icons/infinity.svg"
-                class="com.murphy.action.ProguardOneAction"
-                description="Obfuscate android resources">
+        <group id="and-proguard-group" text="&amp;Proguard" popup="true">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="first"/>
+        </group>
+        <action id="and-proguard-tree" text="Obfuscated Tree" icon="/icons/infinity.svg"
+                class="com.murphy.action.ProguardTreeAction">
+            <add-to-group group-id="and-proguard-group" anchor="first"/>
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </action>
-        <action id="and-proguard-batch" text="Proguard Batch" icon="/icons/infinity.svg"
-                class="com.murphy.action.ProguardBatchAction"
-                description="Obfuscate android resources">
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="first"/>
-            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        <action id="and-proguard-node" text="Obfuscated Node" icon="/icons/infinity.svg"
+                class="com.murphy.action.ProguardNodeAction">
+            <add-to-group group-id="and-proguard-group" anchor="after" relative-to-action="and-proguard-tree"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="and-proguard-tree"/>
+        </action>
+        <action id="and-proguard-bean" text="JSON Mapping Interface" icon="AllIcons.FileTypes.Json"
+                class="com.murphy.action.ProguardBeanAction">
+            <add-to-group group-id="and-proguard-group" anchor="after" relative-to-action="and-proguard-node"/>
+        </action>
+        <action id="and-proguard-package" text="Refactor Packages" icon="com.intellij.icons.ExpUiIcons.Nodes.EditFolder"
+                class="com.murphy.action.ProguardPackAction">
+            <add-to-group group-id="and-proguard-group" anchor="after" relative-to-action="and-proguard-bean"/>
         </action>
     </actions>
 </idea-plugin>

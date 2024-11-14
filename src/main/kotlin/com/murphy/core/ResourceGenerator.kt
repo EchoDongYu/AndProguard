@@ -1,7 +1,6 @@
 package com.murphy.core
 
 import com.android.resources.ResourceType
-import com.android.tools.idea.databinding.util.DataBindingUtil
 import com.android.tools.idea.res.psi.ResourceReferencePsiElement
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -9,7 +8,7 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
 
-object ResourceGenerator : AbstractGenerator() {
+object ResourceGenerator : BatchGenerator() {
     override val name: String get() = "Resource"
 
     val includedAttrType = arrayOf(
@@ -43,19 +42,7 @@ object ResourceGenerator : AbstractGenerator() {
                 xmlAttrList.filter { it.resourceReference.resourceType == ResourceType.ID }
                     .alsoReset("IdResource")
             }.forEach {
-                val psiReferences = service.dumbReadAction { it.findIdReference(scope) }
-                val delegate = it.delegate
-                val newName = config.randomResourceName
-                if (delegate is XmlAttributeValue) {
-                    delegate.renameX(newName, "IdAttribute")
-                    psiReferences?.run {
-                        if (isNotEmpty()) {
-                            val newRefName = DataBindingUtil.convertAndroidIdToJavaFieldName(newName)
-                            println(String.format("[IdBinding] >>> %s", newRefName))
-                            handleReferenceRename(project, newRefName)
-                        }
-                    }
-                }
+                it.renameId(config.randomResourceName, myProject, service, scope)
                 increase()
             }
             service.dumbReadAction {
@@ -63,7 +50,7 @@ object ResourceGenerator : AbstractGenerator() {
                     .map { it.delegate }.filterIsInstance<XmlAttributeValue>()
                     .alsoReset("Resource")
             }.forEach {
-                it.renameX(config.randomResourceName, "Attribute")
+                it.renameX(config.randomResourceName, "XmlAttribute")
                 increase()
             }
         }
@@ -79,27 +66,15 @@ object ResourceGenerator : AbstractGenerator() {
                 xmlFileList.filter { it.resourceReference.resourceType == ResourceType.LAYOUT }
                     .alsoReset("LayoutResource")
             }.forEach {
-                val psiReferences = service.dumbReadAction { it.findLayoutReference(scope) }
-                val delegate = it.delegate
-                val newName = config.randomResFileName
-                if (delegate is XmlFile) {
-                    delegate.rename(newName, "Layout")
-                    psiReferences?.run {
-                        if (isNotEmpty()) {
-                            val newRefName = DataBindingUtil.convertFileNameToJavaClassName(newName) + "Binding"
-                            println(String.format("[LayoutBinding] >>> %s", newRefName))
-                            handleReferenceRename(project, newRefName)
-                        }
-                    }
-                }
+                it.renameLayout(config.randomResFileName, myProject, service, scope)
                 increase()
             }
             service.dumbReadAction {
                 xmlFileList.filter { !excludedFileType.contains(it.resourceReference.resourceType) }
                     .map { it.delegate }.filterIsInstance<XmlFile>()
-                    .alsoReset("FileResource")
+                    .alsoReset("XmlResource")
             }.forEach {
-                it.rename(config.randomResFileName, "File")
+                it.rename(config.randomResFileName, "XmlFile")
                 increase()
             }
         }

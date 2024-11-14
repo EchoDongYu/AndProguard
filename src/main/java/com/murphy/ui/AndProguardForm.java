@@ -11,9 +11,6 @@ public class AndProguardForm {
     private JTextField resourceRule;
     private JTextField resFileRule;
     private JTextField directoryRule;
-    private JRadioButton alsoDir;
-    private JRadioButton onlyDir;
-    private JRadioButton notDir;
 
     public AndProguardForm(boolean skipData, String classRule, String functionRule, String propertyRule, String resourceRule, String resFileRule, String directoryRule) {
         this.skipData.setSelected(skipData);
@@ -83,18 +80,5 @@ public class AndProguardForm {
 
     public void setSkipData(boolean skipData) {
         this.skipData.setSelected(skipData);
-    }
-
-    public int getDirectoryMode() {
-        if (this.notDir.isSelected()) return 1;
-        else if (this.onlyDir.isSelected()) return 2;
-        else if (this.alsoDir.isSelected()) return 3;
-        else return 1;
-    }
-
-    public void setDirectoryMode(int value) {
-        notDir.setSelected(value != 2 && value != 3);
-        onlyDir.setSelected(value == 2);
-        alsoDir.setSelected(value == 3);
     }
 }
