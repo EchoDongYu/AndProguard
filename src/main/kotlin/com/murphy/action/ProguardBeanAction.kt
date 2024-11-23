@@ -1,6 +1,5 @@
 package com.murphy.action
 
-import com.ibm.icu.text.SimpleDateFormat
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
@@ -12,10 +11,10 @@ import com.murphy.core.BeanGenerator
 import com.murphy.core.childrenDfsSequence
 import com.murphy.core.computeTime
 import com.murphy.core.dumbReadAction
+import com.murphy.util.LogUtil
 import com.murphy.util.PLUGIN_NAME
 import com.murphy.util.notifyError
 import com.murphy.util.notifyInfo
-import java.util.Date
 
 class ProguardBeanAction : AnAction() {
 
@@ -23,8 +22,8 @@ class ProguardBeanAction : AnAction() {
         val myPsi = action.getData(PlatformDataKeys.PSI_ELEMENT) ?: return
         val myProject = action.project ?: return
         if (!BeanGenerator.prepare(myProject)) return
-        val dateStart = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
-        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> $dateStart [Refactor Start] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+        val label = "JSON Mapping Interface"
+        LogUtil.logRecord(myProject, label, false)
         val startTime = System.currentTimeMillis()
         ProgressManager.getInstance().run(object : Task.Modal(myProject, PLUGIN_NAME, false) {
             override fun run(indicator: ProgressIndicator) {
@@ -47,8 +46,7 @@ class ProguardBeanAction : AnAction() {
                 error.printStackTrace()
             }
         })
-        val dateEnd = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
-        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> $dateEnd [Refactor End] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+        LogUtil.logRecord(myProject, label, true)
     }
 
 }

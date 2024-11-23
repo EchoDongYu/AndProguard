@@ -43,18 +43,18 @@
                 parentId="tools"
                 id="and-proguard-config"
                 instance="com.murphy.config.AndConfigurable"
-                displayName="AndProguard Config"/>
+                displayName="AndProguard"/>
     </extensions>
     <actions>
         <group id="and-proguard-group" text="&amp;Proguard" popup="true">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="first"/>
         </group>
-        <action id="and-proguard-tree" text="Obfuscated Tree" icon="/icons/infinity.svg"
+        <action id="and-proguard-tree" text="Obfuscate Tree" icon="/icons/infinity.svg"
                 class="com.murphy.action.ProguardTreeAction">
             <add-to-group group-id="and-proguard-group" anchor="first"/>
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </action>
-        <action id="and-proguard-node" text="Obfuscated Node" icon="/icons/infinity.svg"
+        <action id="and-proguard-node" text="Obfuscate Node" icon="/icons/infinity.svg"
                 class="com.murphy.action.ProguardNodeAction">
             <add-to-group group-id="and-proguard-group" anchor="after" relative-to-action="and-proguard-tree"/>
             <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="and-proguard-tree"/>

@@ -93,7 +93,7 @@ private fun String.toElement(): Any {
     val content = substring(1, length - 1)
     if (startsWith('(') && endsWith(')')) return parseNodeAny(content)
     if (startsWith('[') && endsWith(']')) {
-        return if (naming_flags.all { !content.startsWith(it) }) content
+        return if (!content.startsWith(naming_flags)) content
         else parseRuleOrThrow(content)
     }
     throw IllegalArgumentException("Wrong parse element: $this")

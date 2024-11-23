@@ -1,5 +1,7 @@
 package com.murphy.util
 
+import com.murphy.config.AndConfigState
+import com.murphy.util.NamingCombo.randomCombo
 import kotlin.random.Random
 
 /**
@@ -19,49 +21,96 @@ data class NamingRule(
     val underline: Boolean,
     val likeWord: Int
 ) {
-    private val cumulate: Pair<Double, Double>
+    private val cumulativeProbability: Triple<Double, Double, Double>
         get() {
-            val letterProp = if (case != 0) 1.0 else 0.0
-            val digitProp = if (digit) digitWeight else 0.0
-            val underlineProp = if (underline) underlineWeight else 0.0
-            val total = letterProp + digitProp + underlineProp
-            val letterFrequency = letterProp / total
-            return Pair(letterFrequency, letterFrequency + digitProp / total)
+            val letterRatio = if (case != 0) letterWeight else 0.0
+            val comboRatio = if (likeWord == 2) config.comboWeight else 0.0
+            val digitRatio = if (digit) config.digitWeight else 0.0
+            val underlineRatio = if (underline) config.underlineWeight else 0.0
+            val total = letterRatio + comboRatio + digitRatio + underlineRatio
+            val first = letterRatio / total
+            val second = first + comboRatio / total
+            return Triple(first, second, second + digitRatio / total)
         }
 
-    fun generateRandomName(length: Int): String {
-        if (likeWord > 0 && length > 1) return fakeWord(length)
-        return when (hump) {
-            true -> naming_upper.random() + randomWord(length - 1)
-            false -> naming_lower.random() + randomWord(length - 1)
-            null -> randomWord(length)
+    val Char.nextUseVowels: Boolean?
+        get() {
+            val lowerChar = lowercaseChar()
+            return when {
+                likeWord <= 0 -> null
+                naming_vowels.contains(lowerChar) -> false
+                naming_consonants.contains(lowerChar) -> true
+                else -> null
+            }
         }
-    }
 
-    private fun randomWord(length: Int): String {
-        if (length == 0) return ""
-        val (letterCum, digitCum) = cumulate
+    fun generateRandomName(wordLength: Int): String {
+        if (wordLength == 0) return ""
+        val (letterCum, comboCum, digitCum) = cumulativeProbability
+        val repeatable = (case == 0 && !digit && likeWord <= 0) || config.repeatFactor >= 1
         return buildString {
-            repeat(length) {
-                val randomDouble = Random.nextDouble()
-                val randomChar = when {
-                    randomDouble < letterCum -> when {
-                        case == 1 -> naming_upper
-                        case == 2 -> naming_lower
-                        randomDouble < letterCum / 2 -> naming_upper
-                        else -> naming_lower
+            fun checkAppend(char: Char): Boolean {
+                return repeatable || char != lastOrNull() || Random.nextDouble() < config.repeatFactor
+            }
+
+            val firstChar = when (hump) {
+                true -> naming_upper.random()
+                false -> naming_lower.random()
+                null -> null
+            }
+            firstChar?.let { append(it) }
+            var useVowels = firstChar?.nextUseVowels
+            while (length < wordLength) {
+                val lucky = Random.nextDouble()
+                when {
+                    lucky < letterCum -> {
+                        val nextChar = when (useVowels) {
+                            true -> naming_vowels
+                            false -> naming_consonants
+                            null -> naming_lower
+                        }.random()
+                        if (checkAppend(nextChar)) {
+                            useVowels = nextChar.nextUseVowels
+                            val upper = when {
+                                case == 1 -> true
+                                case == 2 -> false
+                                lucky < letterCum / 2 -> true
+                                else -> false
+                            }
+                            append(if (upper) nextChar.uppercaseChar() else nextChar)
+                        }
                     }
 
-                    randomDouble < digitCum -> naming_digit
-                    else -> naming_underline
-                }.random()
-                append(randomChar)
+                    lucky < comboCum -> {
+                        val combo = randomCombo(useVowels)
+                        if (checkAppend(combo.first()) && combo.length <= wordLength - length) {
+                            useVowels = combo.last().nextUseVowels
+                            val nextString = when (case) {
+                                1 -> combo.uppercase()
+                                2 -> combo.lowercase()
+                                3 -> String(CharArray(combo.length) {
+                                    if (Random.nextBoolean()) combo[it].uppercaseChar()
+                                    else combo[it].lowercaseChar()
+                                })
+
+                                else -> combo
+                            }
+                            append(nextString)
+                        }
+                    }
+
+                    else -> {
+                        val nextChar = if (lucky < digitCum) naming_digit.random()
+                        else naming_underline
+                        if (checkAppend(nextChar)) append(nextChar)
+                    }
+                }
             }
         }
     }
 
-    private fun fakeWord(length: Int): String {
-        return ""
+    companion object {
+        private val config by lazy { AndConfigState.getInstance() }
     }
 }
 

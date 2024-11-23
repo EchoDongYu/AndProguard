@@ -13,6 +13,7 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
+import com.murphy.util.LogUtil
 import com.murphy.util.PLUGIN_NAME
 
 fun ResourceReferencePsiElement.findIdReference(scope: SearchScope): List<PsiReference>? {
@@ -55,7 +56,7 @@ fun ResourceReferencePsiElement.renameId(
     originalPsi.renameX(newName, "IdAttribute", project, service)
     psiReferences?.run {
         val newRefName = DataBindingUtil.convertAndroidIdToJavaFieldName(newName)
-        println(String.format("[IdBinding] >>> %s", newRefName))
+        LogUtil.info(project, String.format("[IdBinding] >>> %s", newRefName))
         handleReferenceRename(project, newRefName)
     }
 }
@@ -75,7 +76,7 @@ fun ResourceReferencePsiElement.renameLayout(
     originalPsi.rename(newName, "Layout", project, service)
     psiReferences?.run {
         val newRefName = DataBindingUtil.convertFileNameToJavaClassName(newName) + "Binding"
-        println(String.format("[LayoutBinding] >>> %s", newRefName))
+        LogUtil.info(project, String.format("[LayoutBinding] >>> %s", newRefName))
         handleReferenceRename(project, newRefName)
     }
 }

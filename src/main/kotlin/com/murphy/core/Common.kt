@@ -9,6 +9,7 @@ import com.intellij.psi.impl.getFieldOfGetter
 import com.intellij.psi.impl.getFieldOfSetter
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.refactoring.RefactoringFactory
+import com.murphy.util.LogUtil
 import kotlinx.coroutines.Runnable
 import java.util.concurrent.TimeUnit
 
@@ -33,7 +34,7 @@ fun PsiNamedElement.rename(
 ) {
     val pair = dumbService.dumbReadAction { Pair(!isValid, name) }
     if (pair.first || pair.second == null) return
-    println(String.format("[$desc] %s >>> %s", pair.second, newName))
+    LogUtil.info(myProject, String.format("[$desc] %s >>> %s", pair.second, newName))
     rename(newName, myProject, dumbService)
 }
 
@@ -45,7 +46,7 @@ fun XmlAttributeValue.renameX(
 ) {
     val pair = dumbService.dumbReadAction { Pair(!isValid, value) }
     if (pair.first) return
-    println(String.format("[$desc] %s >>> %s", pair.second, newName))
+    LogUtil.info(myProject, String.format("[$desc] %s >>> %s", pair.second, newName))
     rename(newName, myProject, dumbService)
 }
 

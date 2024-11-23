@@ -2,7 +2,6 @@ package com.murphy.action
 
 import com.android.resources.ResourceType
 import com.android.tools.idea.res.psi.ResourceReferencePsiElement
-import com.ibm.icu.text.SimpleDateFormat
 import com.intellij.json.psi.JsonFile
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -25,6 +24,7 @@ import com.murphy.core.ResourceGenerator.includedAttrType
 import com.murphy.core.rename
 import com.murphy.core.renameX
 import com.murphy.util.KOTLIN_SUFFIX
+import com.murphy.util.LogUtil
 import com.murphy.util.notifyInfo
 import com.murphy.util.notifyWarn
 import org.jetbrains.kotlin.idea.core.getPackage
@@ -34,19 +34,18 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtVariableDeclaration
-import java.util.*
 
 class ProguardNodeAction : AnAction() {
 
     override fun actionPerformed(action: AnActionEvent) {
         val myPsi = action.getData(PlatformDataKeys.PSI_ELEMENT) ?: return
         val myProject = action.project ?: return
-        val dateStart = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
         fun PsiNamedElement.rename(newName: String, desc: String) = rename(newName, desc, myProject)
         fun XmlAttributeValue.renameX(newName: String, desc: String) = renameX(newName, desc, myProject)
-        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> $dateStart [Refactor Start] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+        val label = "Obfuscate Node"
+        LogUtil.logRecord(myProject, label, false)
         val startTime = System.currentTimeMillis()
-        val config = AndConfigState.getInstance().apply { initRandomNode() }
+        val config = AndConfigState.getInstance()
         if (myPsi !is PsiNamedElement) {
             notifyWarn(myProject, "PsiElement ${myPsi.javaClass.name} $myPsi")
             return
@@ -111,8 +110,7 @@ class ProguardNodeAction : AnAction() {
             else -> notifyWarn(myProject, "PsiNamedElement ${myPsi.javaClass.name} $myPsi")
         }
         notifyInfo(myProject, "refactor finished, take ${computeTime(startTime)}")
-        val dateEnd = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
-        println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> $dateEnd [Refactor End] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+        LogUtil.logRecord(myProject, label, true)
     }
 
 }
