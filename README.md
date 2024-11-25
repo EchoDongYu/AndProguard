@@ -10,7 +10,7 @@
 - AndProguard 执行时会查找所有能修改的元素执行重命名，包括`Java/Kotlin`中的：类名、文件名、方法/函数名、字段/属性名、参数名和局部变量名，
   `Xml`中的属性名和文件名。
 - 它的原理是基于官方插件的重命名功能，在修改元素时会自动处理所有引用的修改；AndProguard 是在此基础上功能扩展。
-- 支持在设置中[自定义命名规则（Custom naming）](NamingRule.zh.md)
+- 支持在设置中[自定义命名规则（Custom naming）](NamingRule)
 
 > #### AndProguard 能做什么？
 >- 应用加固，增加 aab、apk 反编译的难度。
