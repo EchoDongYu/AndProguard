@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.konan.properties.loadProperties
+
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.9.25"
@@ -33,18 +35,15 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("232")
-        untilBuild.set("242.*")
-    }
-
-    signPlugin {
-        certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
-        privateKey.set(System.getenv("PRIVATE_KEY"))
-        password.set(System.getenv("PRIVATE_KEY_PASSWORD"))
+        untilBuild.set("241.*")
     }
 
     publishPlugin {
-        // perm:eXVfZG9uZw==.OTItMTAxODM=.OxxeFjW1mdccTSV8Xk1LybzC44YuOv
-        token.set(System.getenv("perm:eXVfZG9uZw==.OTItMTAxODM=.OxxeFjW1mdccTSV8Xk1LybzC44YuOv"))
-        channels.set(listOf("eap"))
+        // AndProguard token
+        val file = rootProject.file("token.properties")
+        val localProperties = loadProperties(file.path)
+        val tokenValue = localProperties["token"].toString()
+        token.set(tokenValue)
+        channels.set(listOf("Stable"))
     }
 }
