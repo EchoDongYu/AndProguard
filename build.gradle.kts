@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.konan.properties.loadProperties
+
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.9.21"
@@ -5,7 +7,7 @@ plugins {
 }
 
 group = "com.murphy"
-version = "3.5.6"
+version = "3.6.1"
 
 repositories {
     mavenCentral()
@@ -33,17 +35,15 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("211")
-        untilBuild.set("")
-    }
-
-    signPlugin {
-        certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
-        privateKey.set(System.getenv("PRIVATE_KEY"))
-        password.set(System.getenv("PRIVATE_KEY_PASSWORD"))
+        untilBuild.set("231.*")
     }
 
     publishPlugin {
-        // perm:eXVfZG9uZw==.OTItOTY0NQ==.SSkneAGYcSOioMXzlmCvsGxFPAGKQx
-        token.set(System.getenv("PUBLISH_TOKEN"))
+        // AndProguard token
+        val file = rootProject.file("token.properties")
+        val localProperties = loadProperties(file.path)
+        val tokenValue = localProperties["token"].toString()
+        token.set(tokenValue)
+        channels.set(listOf("Stable"))
     }
 }
