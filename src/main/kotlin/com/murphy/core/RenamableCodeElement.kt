@@ -61,7 +61,7 @@ class RenamableCodeElement(
                 .toList()
         }
 
-        fun Sequence<PsiNamedElement>.findSkipElements(): Sequence<PsiNamedElement> {
+        private fun Sequence<PsiNamedElement>.findSkipElements(): Sequence<PsiNamedElement> {
             val skipJava = filterIsInstance<PsiMethodImpl>()
                 .filter { it.isGetterOrSetter }
                 .mapNotNull { it.fieldOfGetterOrSetter }

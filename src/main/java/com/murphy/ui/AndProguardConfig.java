@@ -1,5 +1,7 @@
 package com.murphy.ui;
 
+import com.murphy.config.AndConfigState;
+
 import javax.swing.*;
 
 public class AndProguardConfig {
@@ -21,23 +23,23 @@ public class AndProguardConfig {
     private JSlider comboSlider;
     private JSlider repeatSlider;
 
-    public AndProguardConfig(boolean skipData, String[] rule, Double[] weight, String combinations) {
-        this.skipData.setSelected(skipData);
-        this.classRule.setText(rule[0]);
-        this.functionRule.setText(rule[1]);
-        this.propertyRule.setText(rule[2]);
-        this.resourceRule.setText(rule[3]);
-        this.layoutRule.setText(rule[4]);
-        this.directoryRule.setText(rule[5]);
-        this.combinations.setText(combinations);
-        setDigitWeight(weight[0]);
-        setUnderlineWeight(weight[1]);
-        setComboWeight(weight[2]);
-        setRepeatFactor(weight[3]);
-        this.digitSlider.setValue((int) (weight[0] * 100));
-        this.underlineSlider.setValue((int) (weight[1] * 100));
-        this.comboSlider.setValue((int) (weight[2] * 100));
-        this.repeatSlider.setValue((int) (weight[3] * 100));
+    public AndProguardConfig(AndConfigState.State state) {
+        this.skipData.setSelected(state.getSkipData());
+        this.classRule.setText(state.getClassRule());
+        this.functionRule.setText(state.getFunctionRule());
+        this.propertyRule.setText(state.getPropertyRule());
+        this.resourceRule.setText(state.getResourceRule());
+        this.layoutRule.setText(state.getLayoutRule());
+        this.directoryRule.setText(state.getDirectoryRule());
+        this.combinations.setText(state.getCombinations());
+        setDigitWeight(state.getDigitWeight());
+        setUnderlineWeight(state.getUnderlineWeight());
+        setComboWeight(state.getComboWeight());
+        setRepeatFactor(state.getRepeatFactor());
+        this.digitSlider.setValue((int) (state.getDigitWeight() * 100));
+        this.underlineSlider.setValue((int) (state.getUnderlineWeight() * 100));
+        this.comboSlider.setValue((int) (state.getComboWeight() * 100));
+        this.repeatSlider.setValue((int) (state.getRepeatFactor() * 100));
         this.digitSlider.addChangeListener(it -> {
             JSlider source = (JSlider) it.getSource();
             setDigitWeight(source.getModel().getValue() / 100.0);

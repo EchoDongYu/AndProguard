@@ -2,8 +2,6 @@ package com.murphy.util
 
 const val PLUGIN_NAME = "AndProguard"
 
-const val KOTLIN_SUFFIX = ".kt"
-
 const val naming_vowels = "aeiou" //元音
 const val naming_consonants = "bcdfghjklmnpqrstvwxyz" //辅音
 const val naming_upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"

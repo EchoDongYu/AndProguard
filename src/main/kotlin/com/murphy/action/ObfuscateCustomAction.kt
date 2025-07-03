@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.DumbService
@@ -11,12 +12,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.murphy.config.AndConfigState
-import com.murphy.core.*
+import com.murphy.core.NamingPool
+import com.murphy.core.RenamableCodeElement
+import com.murphy.core.RenamableXmlElement
+import com.murphy.core.computeTime
 import com.murphy.ui.CustomDialog
 import com.murphy.util.LogUtil
 import com.murphy.util.PLUGIN_NAME
 import com.murphy.util.notifyError
 import com.murphy.util.notifyInfo
+import org.jetbrains.kotlin.idea.base.psi.childrenDfsSequence
 
 class ObfuscateCustomAction : AnAction() {
 
@@ -50,7 +55,7 @@ fun obfuscateByCheck(
         val config = AndConfigState.getInstance()
         val service = DumbService.getInstance(myProject)
         indicator.text = "Find element"
-        val list = service.runReadActionInSmartMode<List<RenamableElement<*>>> {
+        val list = runReadAction {
             val sequence = myPsi.childrenDfsSequence().filterIsInstance<PsiNamedElement>()
             val xmlElements = if (check.resource) RenamableXmlElement.findElements(myProject, sequence) else emptyList()
             val codeElements = RenamableCodeElement.findElements(config.state.skipData, check, sequence)

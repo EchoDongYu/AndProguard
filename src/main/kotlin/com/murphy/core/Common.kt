@@ -1,70 +1,9 @@
 package com.murphy.core
 
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.project.DumbService
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Computable
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.impl.getFieldOfGetter
 import com.intellij.psi.impl.getFieldOfSetter
-import com.intellij.psi.xml.XmlAttributeValue
-import com.intellij.refactoring.RefactoringFactory
-import com.murphy.util.LogUtil
 import java.util.concurrent.TimeUnit
-
-fun PsiElement.childrenDfsSequence(): Sequence<PsiElement> =
-    sequence {
-        suspend fun SequenceScope<PsiElement>.visit(element: PsiElement) {
-            element.children.forEach { visit(it) }
-            yield(element)
-        }
-        visit(this@childrenDfsSequence)
-    }
-
-inline fun <reified T> DumbService.dumbReadAction(r: Computable<T>): T {
-    return runReadActionInSmartMode<T> { r.compute() }
-}
-
-fun PsiNamedElement.rename(
-    newName: String,
-    desc: String,
-    myProject: Project,
-    dumbService: DumbService = DumbService.getInstance(myProject)
-) {
-    val pair = dumbService.dumbReadAction { Pair(!isValid, name) }
-    if (pair.first || pair.second == null) return
-    LogUtil.info(myProject, String.format("[$desc] %s >>> %s", pair.second, newName))
-    rename(newName, myProject, dumbService)
-}
-
-fun XmlAttributeValue.renameX(
-    newName: String,
-    desc: String,
-    myProject: Project,
-    dumbService: DumbService = DumbService.getInstance(myProject)
-) {
-    val pair = dumbService.dumbReadAction { Pair(!isValid, value) }
-    if (pair.first) return
-    LogUtil.info(myProject, String.format("[$desc] %s >>> %s", pair.second, newName))
-    rename(newName, myProject, dumbService)
-}
-
-private fun PsiElement.rename(newName: String, myProject: Project, service: DumbService) {
-    val runnable = Runnable {
-        RefactoringFactory.getInstance(myProject)
-            .createRename(this, newName, false, false)
-            .run()
-    }
-    ApplicationManager.getApplication().invokeAndWait {
-        if (service.isDumb) {
-            service.runWhenSmart { service.smartInvokeLater(runnable) }
-        } else {
-            runnable.run()
-        }
-    }
-}
 
 private val PsiMethod.isSetter: Boolean
     get() = name.startsWith("set")

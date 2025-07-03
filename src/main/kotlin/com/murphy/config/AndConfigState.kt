@@ -22,7 +22,7 @@ class AndConfigState : PersistentStateComponent<AndConfigState.State> {
         val directoryRule: String = "[^LW2]{5,12}",
         val skipData: Boolean = true,
         val digitWeight: Double = 0.15,
-        val underlineWeight: Double = 0.07,
+        val underlineWeight: Double = 0.03,
         val comboWeight: Double = 0.2,
         val repeatFactor: Double = 0.3,
         val combinations: String = "ch,sh,th,wh,ph,cl,fl,pl,bl,tr,dr,gr,br,fr,st,sp,sk,sc,sn,sw,ck,ng,nd," +
@@ -32,14 +32,6 @@ class AndConfigState : PersistentStateComponent<AndConfigState.State> {
 
     @Transient
     lateinit var namingNodes: List<NamingNode>
-
-    val randomClassName get() = namingNodes[0].randomNaming
-    val randomFunctionName get() = namingNodes[1].randomNaming
-    val randomPropertyName get() = namingNodes[2].randomNaming
-
-    //val randomResourceName get() = namingNodes[3].randomNaming
-    val randomResFileName get() = namingNodes[4].randomNaming
-    val randomDirectoryName get() = namingNodes[5].randomNaming
 
     private var myState = State()
     override fun getState(): AndConfigState.State = myState

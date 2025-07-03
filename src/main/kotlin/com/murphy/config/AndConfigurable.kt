@@ -7,17 +7,7 @@ import javax.swing.JComponent
 class AndConfigurable : Configurable {
     private val config by lazy { AndConfigState.getInstance() }
     private val state get() = config.state
-    private val form by lazy {
-        AndProguardConfig(
-            state.skipData,
-            arrayOf(
-                state.classRule, state.functionRule, state.propertyRule,
-                state.resourceRule, state.layoutRule, state.directoryRule
-            ),
-            arrayOf(state.digitWeight, state.underlineWeight, state.comboWeight, state.repeatFactor),
-            state.combinations
-        )
-    }
+    private val form by lazy { AndProguardConfig(state) }
 
     override fun createComponent(): JComponent? = form.panel
 

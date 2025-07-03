@@ -11,6 +11,7 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
 import com.murphy.util.LogUtil
+import org.jetbrains.kotlin.idea.base.psi.childrenDfsSequence
 
 class RenamableXmlElement(
     override val element: ResourceReferencePsiElement,

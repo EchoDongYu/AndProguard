@@ -1,52 +1,94 @@
 package com.murphy.action
 
+import com.intellij.json.psi.JsonFile
+import com.intellij.json.psi.JsonObject
+import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.Task
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.fileChooser.FileChooser
+import com.intellij.openapi.fileChooser.FileChooserDescriptor
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.DumbService
-import com.murphy.core.BeanGenerator
-import com.murphy.core.childrenDfsSequence
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiLanguageInjectionHost
+import com.intellij.psi.PsiManager
+import com.murphy.core.RenamableBeanElement
 import com.murphy.core.computeTime
-import com.murphy.core.dumbReadAction
-import com.murphy.util.LogUtil
-import com.murphy.util.PLUGIN_NAME
-import com.murphy.util.notifyError
-import com.murphy.util.notifyInfo
+import com.murphy.util.*
+import org.jetbrains.kotlin.idea.base.psi.childrenDfsSequence
 
 class MappingBeanAction : AnAction() {
 
     override fun actionPerformed(action: AnActionEvent) {
         val myPsi = action.getData(PlatformDataKeys.PSI_ELEMENT) ?: return
         val myProject = action.project ?: return
-        if (!BeanGenerator.prepare(myProject)) return
         val label = "JSON Mapping Interface"
-        LogUtil.logRecord(myProject, label, false)
+        val beanMap = beanMap(myProject) ?: return
         val startTime = System.currentTimeMillis()
-        ProgressManager.getInstance().run(object : Task.Modal(myProject, PLUGIN_NAME, false) {
-            override fun run(indicator: ProgressIndicator) {
-                indicator.isIndeterminate = false
-                indicator.fraction = 0.0
-
-                DumbService.getInstance(myProject).dumbReadAction {
-                    myPsi.childrenDfsSequence().toList()
-                }.run {
-                    BeanGenerator.process(myProject, indicator, this)
+        runBackgroundableTask(PLUGIN_NAME, myProject) { indicator ->
+            try {
+                val service = DumbService.getInstance(myProject)
+                indicator.text = "Find element"
+                val pair = runReadAction {
+                    RenamableBeanElement.findElements(beanMap, myPsi.childrenDfsSequence())
+                        .partition { it.element is PsiLanguageInjectionHost }
                 }
-            }
-
-            override fun onSuccess() {
+                indicator.text = "Create naming"
+                val total = pair.first.count() + pair.second.count()
+                val runnable = Runnable {
+                    pair.second.forEachIndexed { index, item ->
+                        indicator.fraction = index / total.toDouble()
+                        indicator.text = "${item.currentName} ${index + 1}/$total"
+                        item.performRename(myProject, null)
+                    }
+                    WriteCommandAction.runWriteCommandAction(myProject) {
+                        pair.first.forEachIndexed { index, item ->
+                            indicator.fraction = index / total.toDouble()
+                            indicator.text = "${item.currentName} ${index + 1}/$total"
+                            item.performRename(myProject, null)
+                        }
+                    }
+                }
+                ApplicationManager.getApplication().invokeAndWait {
+                    if (service.isDumb) {
+                        service.smartInvokeLater(runnable)
+                    } else {
+                        runnable.run()
+                    }
+                }
+                LogUtil.logRecord(myProject, label, true)
                 notifyInfo(myProject, "refactor finished, take ${computeTime(startTime)}")
+            } catch (e: Exception) {
+                if (e is ProcessCanceledException) throw e
+                else notifyError(myProject, "${e.message}")
+                e.printStackTrace()
             }
+        }
+    }
 
-            override fun onThrowable(error: Throwable) {
-                notifyError(myProject, "${error.message}")
-                error.printStackTrace()
-            }
-        })
-        LogUtil.logRecord(myProject, label, true)
+    private fun beanMap(project: Project): Map<String, String>? {
+        val descriptor = FileChooserDescriptor(true, false, false, false, false, false)
+            .withFileFilter { it.extension == "json" }
+        val chooseFile = FileChooser.chooseFile(descriptor, project, null)
+        val psiFile = chooseFile?.let { PsiManager.getInstance(project).findFile(it) }
+        val jsonValue = (psiFile as? JsonFile)?.topLevelValue
+        if (jsonValue !is JsonObject) {
+            notifyWarn(project, "Only JsonObject is supported")
+            return null
+        }
+        val map = jsonValue.propertyList.mapNotNull { property ->
+            (property.value as? JsonStringLiteral)?.let { property.name to it.value }
+        }.toMap()
+        if (map.isEmpty()) {
+            notifyWarn(project, "Key-value isEmpty")
+            return null
+        }
+        return map
     }
 
 }

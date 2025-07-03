@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
@@ -37,9 +38,7 @@ class ObfuscateNodeAction : AnAction() {
         runBackgroundableTask(PLUGIN_NAME, myProject) {
             val config = AndConfigState.getInstance()
             val service = DumbService.getInstance(myProject)
-            val renamableElement = service.runReadActionInSmartMode<RenamableElement<*>?> {
-                toRenamableElement(myPsi, myProject)
-            }
+            val renamableElement = runReadAction { toRenamableElement(myPsi, myProject) }
             if (renamableElement == null) {
                 notifyWarn(myProject, "PsiNamedElement ${myPsi.javaClass.name} $myPsi")
                 return@runBackgroundableTask
