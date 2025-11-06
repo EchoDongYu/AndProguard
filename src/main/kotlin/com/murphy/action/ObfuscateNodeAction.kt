@@ -5,23 +5,20 @@ import com.intellij.json.psi.JsonFile
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiBinaryFile
-import com.intellij.psi.PsiDirectory
-import com.intellij.psi.PsiNamedElement
-import com.intellij.psi.impl.source.*
-import com.intellij.psi.impl.source.tree.java.PsiLocalVariableImpl
+import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
 import com.murphy.config.AndConfigState
+import com.murphy.core.CustomCheck
 import com.murphy.core.RenamableCodeElement.Companion.toRenamableCodeElement
 import com.murphy.core.RenamableElement
 import com.murphy.core.RenamableXmlElement.Companion.toRenamableXmlElement
+import com.murphy.core.executeOnSmartMode
 import com.murphy.util.PLUGIN_NAME
 import com.murphy.util.notifyWarn
 import org.jetbrains.kotlin.psi.*
@@ -36,23 +33,16 @@ class ObfuscateNodeAction : AnAction() {
             return
         }
         runBackgroundableTask(PLUGIN_NAME, myProject) {
-            val config = AndConfigState.getInstance()
-            val service = DumbService.getInstance(myProject)
             val renamableElement = runReadAction { toRenamableElement(myPsi, myProject) }
             if (renamableElement == null) {
                 notifyWarn(myProject, "PsiNamedElement ${myPsi.javaClass.name} $myPsi")
                 return@runBackgroundableTask
             }
-            val runnable = Runnable {
-                val newName = renamableElement.namingIndex?.let { config.namingNodes[it].randomNaming }
-                renamableElement.performRename(myProject, newName)
+            val newName = renamableElement.namingIndex?.let {
+                AndConfigState.getInstance().namingNodes[it].randomNaming
             }
-            ApplicationManager.getApplication().invokeAndWait {
-                if (service.isDumb) {
-                    service.smartInvokeLater(runnable)
-                } else {
-                    runnable.run()
-                }
+            DumbService.getInstance(myProject).executeOnSmartMode {
+                renamableElement.performRename(myProject, newName)
             }
         }
     }
@@ -66,15 +56,15 @@ class ObfuscateNodeAction : AnAction() {
 
             is KtFile, is KtClass,
             is KtObjectDeclaration,
-            is PsiClassImpl,
-            is PsiEnumConstantImpl,
+            is PsiClass,
+            is PsiEnumConstant,
             is KtNamedFunction,
-            is PsiMethodImpl,
+            is PsiMethod,
             is KtVariableDeclaration,
             is KtParameter,
-            is PsiParameterImpl,
-            is PsiFieldImpl,
-            is PsiLocalVariableImpl,
+            is PsiParameter,
+            is PsiField,
+            is PsiLocalVariable,
             is PsiDirectory,
             is PsiBinaryFile, is JsonFile -> myPsi.toRenamableCodeElement(false, CustomCheck())
 

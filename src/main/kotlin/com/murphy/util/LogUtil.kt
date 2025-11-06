@@ -9,18 +9,21 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 object LogUtil {
+    private val dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
+    private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
     /**
      * 记录日志信息
      * @param message 日志内容
      */
     fun info(myProject: Project, message: String) {
-        val formatNow = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+        val formatNow = LocalDateTime.now().format(dateFormatter)
         println(message)
         writeToFile(message, "${myProject.basePath}/mapping_log_$formatNow.txt")
     }
 
     fun logRecord(myProject: Project, label: String, end: Boolean) {
-        val formatNow = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        val formatNow = LocalDateTime.now().format(dateTimeFormatter)
         val flag = if (end) "End" else "Start"
         val message = ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> $flag [$label] $formatNow <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
         info(myProject, message)

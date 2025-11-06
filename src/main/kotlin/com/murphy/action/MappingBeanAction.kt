@@ -6,7 +6,6 @@ import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileChooser.FileChooser
@@ -19,6 +18,7 @@ import com.intellij.psi.PsiLanguageInjectionHost
 import com.intellij.psi.PsiManager
 import com.murphy.core.RenamableBeanElement
 import com.murphy.core.computeTime
+import com.murphy.core.executeOnSmartMode
 import com.murphy.util.*
 import org.jetbrains.kotlin.idea.base.psi.childrenDfsSequence
 
@@ -32,15 +32,14 @@ class MappingBeanAction : AnAction() {
         val startTime = System.currentTimeMillis()
         runBackgroundableTask(PLUGIN_NAME, myProject) { indicator ->
             try {
-                val service = DumbService.getInstance(myProject)
                 indicator.text = "Find element"
                 val pair = runReadAction {
-                    RenamableBeanElement.findElements(beanMap, myPsi.childrenDfsSequence())
-                        .partition { it.element is PsiLanguageInjectionHost }
+                    RenamableBeanElement.findElements(myProject, beanMap, myPsi.childrenDfsSequence())
+                        .partition { it.pointer.element is PsiLanguageInjectionHost }
                 }
                 indicator.text = "Create naming"
                 val total = pair.first.count() + pair.second.count()
-                val runnable = Runnable {
+                DumbService.getInstance(myProject).executeOnSmartMode {
                     pair.second.forEachIndexed { index, item ->
                         indicator.fraction = index / total.toDouble()
                         indicator.text = "${item.currentName} ${index + 1}/$total"
@@ -52,13 +51,6 @@ class MappingBeanAction : AnAction() {
                             indicator.text = "${item.currentName} ${index + 1}/$total"
                             item.performRename(myProject, null)
                         }
-                    }
-                }
-                ApplicationManager.getApplication().invokeAndWait {
-                    if (service.isDumb) {
-                        service.smartInvokeLater(runnable)
-                    } else {
-                        runnable.run()
                     }
                 }
                 LogUtil.logRecord(myProject, label, true)
@@ -75,15 +67,19 @@ class MappingBeanAction : AnAction() {
         val descriptor = FileChooserDescriptor(true, false, false, false, false, false)
             .withFileFilter { it.extension == "json" }
         val chooseFile = FileChooser.chooseFile(descriptor, project, null)
-        val psiFile = chooseFile?.let { PsiManager.getInstance(project).findFile(it) }
-        val jsonValue = (psiFile as? JsonFile)?.topLevelValue
+        val jsonValue = runReadAction {
+            val psiFile = chooseFile?.let { PsiManager.getInstance(project).findFile(it) }
+            (psiFile as? JsonFile)?.topLevelValue
+        }
         if (jsonValue !is JsonObject) {
             notifyWarn(project, "Only JsonObject is supported")
             return null
         }
-        val map = jsonValue.propertyList.mapNotNull { property ->
-            (property.value as? JsonStringLiteral)?.let { property.name to it.value }
-        }.toMap()
+        val map = runReadAction {
+            jsonValue.propertyList.mapNotNull { property ->
+                (property.value as? JsonStringLiteral)?.let { property.name to it.value }
+            }.toMap()
+        }
         if (map.isEmpty()) {
             notifyWarn(project, "Key-value isEmpty")
             return null

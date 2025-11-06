@@ -12,9 +12,10 @@ class NamingPool(private val randomName: List<LinkedList<String>>) {
             val randomName = list.map { it.namingIndex }
                 .let { position -> List(6) { index -> position.count { it == index } } }
                 .mapIndexed { index, count ->
-                    LinkedList(List((count * 1.2).toInt()) {
-                        config.namingNodes[index].randomNaming
-                    }.distinct())
+                    generateSequence { config.namingNodes[index].randomNaming }
+                        .distinct()
+                        .take(count)
+                        .toCollection(LinkedList())
                 }
             return NamingPool(randomName)
         }

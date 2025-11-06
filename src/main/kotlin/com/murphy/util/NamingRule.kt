@@ -110,7 +110,7 @@ data class NamingRule(
     }
 
     companion object {
-        private val state by lazy { AndConfigState.getInstance().state }
+        private val state get() = AndConfigState.getInstance().state
     }
 }
 

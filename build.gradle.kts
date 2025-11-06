@@ -29,11 +29,10 @@ dependencies {
 }
 
 intellijPlatform {
-    version = "3.6.6"
+    version = "3.6.8"
     group = "com.murphy.proguard"
     pluginConfiguration {
         ideaVersion.sinceBuild.set("242")
-        ideaVersion.untilBuild.set("251.*")
     }
 }
 

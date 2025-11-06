@@ -1,9 +1,7 @@
 package com.murphy.core
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiLanguageInjectionHost
-import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.*
 import com.intellij.psi.impl.source.PsiFieldImpl
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
 import com.intellij.psi.util.PropertyUtilBase.*
@@ -14,13 +12,14 @@ import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.plainContent
 
 class RenamableBeanElement(
-    override val element: PsiElement,
+    override val pointer: SmartPsiElementPointer<PsiElement>,
     override val currentName: String?,
     val newName: String
 ) : RenamableElement<PsiElement> {
-    override val namingIndex: Int? = -1
+    override val namingIndex: Int = -1
 
     override fun performRename(project: Project, name: String?) {
+        val element = pointer.element ?: return
         if (element is PsiLanguageInjectionHost) {
             LogUtil.info(project, "[${element.javaClass.simpleName}] $currentName >>> $newName")
             element.updateText("\"$newName\"")
@@ -30,19 +29,30 @@ class RenamableBeanElement(
     }
 
     companion object {
-        fun findElements(map: Map<String, String>, sequence: Sequence<PsiElement>): List<RenamableBeanElement> {
+        fun findElements(
+            project: Project,
+            map: Map<String, String>,
+            sequence: Sequence<PsiElement>
+        ): List<RenamableBeanElement> {
+            val pointerManager = SmartPointerManager.getInstance(project)
+
+            fun renamableBeanElement(element: PsiElement, oldName: String?, newName: String): RenamableBeanElement {
+                val pointer = pointerManager.createSmartPsiElementPointer(element)
+                return RenamableBeanElement(pointer, oldName, newName)
+            }
+
             return sequence.mapNotNull { psi ->
                 when (psi) {
                     is PsiFieldImpl -> {
                         val oldName = psi.name
                         val newName = map[oldName] ?: return@mapNotNull null
                         buildList {
-                            add(RenamableBeanElement(psi, oldName, newName))
+                            add(renamableBeanElement(psi, oldName, newName))
                             findSetterForField(psi)?.let {
-                                add(RenamableBeanElement(it, it.name, suggestSetterName(newName)))
+                                add(renamableBeanElement(it, it.name, suggestSetterName(newName)))
                             }
                             findGetterForField(psi)?.let {
-                                add(RenamableBeanElement(it, it.name, suggestGetterName(newName, psi.type)))
+                                add(renamableBeanElement(it, it.name, suggestGetterName(newName, psi.type)))
                             }
                         }
                     }
@@ -52,7 +62,7 @@ class RenamableBeanElement(
                         element.mapNotNull {
                             val oldName = it.name ?: return@mapNotNull null
                             val newName = map[oldName] ?: return@mapNotNull null
-                            RenamableBeanElement(it, oldName, newName)
+                            renamableBeanElement(it, oldName, newName)
                         }
                     }
 
@@ -63,7 +73,7 @@ class RenamableBeanElement(
                             else -> null
                         } ?: return@mapNotNull null
                         val newName = map[content] ?: return@mapNotNull null
-                        listOf(RenamableBeanElement(psi, content, newName))
+                        listOf(renamableBeanElement(psi, content, newName))
                     }
 
                     else -> null

@@ -1,7 +1,7 @@
-package com.murphy.ui
+package com.murphy.config
 
 import com.intellij.openapi.ui.DialogWrapper
-import com.murphy.action.CustomCheck
+import com.murphy.core.CustomCheck
 import org.jdesktop.swingx.HorizontalLayout
 import java.awt.BorderLayout
 import javax.swing.BorderFactory

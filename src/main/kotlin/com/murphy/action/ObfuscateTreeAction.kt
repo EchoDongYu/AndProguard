@@ -3,7 +3,9 @@ package com.murphy.action
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
+import com.murphy.core.CustomCheck
 import com.murphy.core.computeTime
+import com.murphy.core.obfuscateByCheck
 import com.murphy.util.LogUtil
 import com.murphy.util.notifyInfo
 
